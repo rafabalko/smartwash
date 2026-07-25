@@ -1,0 +1,50 @@
+<div class="veiculos-container">
+  <h2>🚗 Meus Veículos</h2>
+
+  <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+  <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
+  <!-- FORMULÁRIO DE CADASTRO -->
+  <div class="card-cadastro">
+    <h3>Adicionar Novo Veículo</h3>
+    <form (ngSubmit)="cadastrarVeiculo()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Marca:</label>
+          <input type="text" [(ngModel)]="marcaInput" name="marca" placeholder="Ex: Honda" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Modelo:</label>
+          <input type="text" [(ngModel)]="modeloInput" name="modelo" placeholder="Ex: Civic" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Placa:</label>
+          <input type="text" [(ngModel)]="placaInput" name="placa" placeholder="Ex: ABC1D23" class="form-control">
+        </div>
+      </div>
+      <button type="submit" class="btn-cadastrar">+ Cadastrar Veículo</button>
+    </form>
+  </div>
+
+  <!-- LISTA DE VEÍCULOS -->
+  <div class="lista-veiculos">
+    <h3>Veículos Cadastrados</h3>
+
+    <div *ngIf="carregando" class="text-muted">Carregando seus veículos...</div>
+
+    <div *ngIf="!carregando && veiculos.length === 0" class="text-muted">
+      Você ainda não possui veículos cadastrados.
+    </div>
+
+    <div class="grid-veiculos" *ngIf="!carregando && veiculos.length > 0">
+      <div class="card-veiculo" *ngFor="let v of veiculos">
+        <div class="veiculo-info">
+          <h4>{{ v.modelo }}</h4>
+          <p class="marca">Marca: {{ v.marca }}</p>
+          <p class="placa">Placa: <strong>{{ v.placa }}</strong></p>
+        </div>
+        <button class="btn-deletar" (click)="deletarVeiculo(v.id)" title="Remover Veículo">🗑️ Excluir</button>
+      </div>
+    </div>
+  </div>
+</div>

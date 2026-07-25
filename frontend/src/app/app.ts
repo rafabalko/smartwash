@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './components/navbar/navbar';
 import { BuscaEstabelecimentosComponent } from './components/busca-estabelecimentos/busca-estabelecimentos';
 import { AgendamentoComponent } from './components/agendamento/agendamento';
+import { MeusVeiculosComponent } from './components/meus-veiculos/meus-veiculos';
 import { Estabelecimento } from './services/api';
 
 @Component({
@@ -12,7 +13,8 @@ import { Estabelecimento } from './services/api';
     CommonModule,
     NavbarComponent,
     BuscaEstabelecimentosComponent,
-    AgendamentoComponent
+    AgendamentoComponent.
+    MeusVeiculosComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

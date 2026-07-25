@@ -19,10 +19,15 @@
       *ngIf="!isLoggedIn || abaAtiva === 'agendamentos'">
     </app-agendamento>
 
+    <!-- SEÇÃO 3: MEUS VEÍCULOS -->
+    <app-meus-veiculos
+      *ngIf="isLoggedIn && abaAtiva === 'veiculos'">
+    </app-meus-veiculos>
+
     <!-- SEÇÕES SECUNDÁRIAS (PLACEHOLDERS EM DESENVOLVIMENTO) -->
-    <div class="container-em-breve" *ngIf="isLoggedIn && ['historico', 'favoritos', 'veiculos', 'perfil', 'alterar-senha'].includes(abaAtiva)">
+    <div class="container-em-breve" *ngIf="isLoggedIn && ['historico', 'favoritos', 'perfil', 'alterar-senha'].includes(abaAtiva)">
       <div class="card-em-breve">
-        <h2>🛠️ Modulo em Construção</h2>
+        <h2>🛠️ Módulo em Construção</h2>
         <p>Você selecionou a aba: <strong>{{ abaAtiva | uppercase }}</strong></p>
         <p>Em breve esta funcionalidade estará totalmente disponível!</p>
         <button (click)="mudarAba('buscar')" class="btn-voltar">Voltar para a Busca</button>
