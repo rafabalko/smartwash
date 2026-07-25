@@ -1,1 +1,32 @@
-<app-agendamento></app-agendamento>
+<div class="app-container">
+  <!-- Navbar Fixo no Topo para Usuários Logados -->
+  <app-navbar
+    *ngIf="isLoggedIn"
+    [abaAtiva]="abaAtiva"
+    (mudarAba)="mudarAba($event)"
+    (logout)="executarLogout()">
+  </app-navbar>
+
+  <main class="main-content">
+    <!-- SEÇÃO 1: BUSCAR LAVA-RÁPIDOS (PÁGINA INICIAL DO CLIENTE) -->
+    <app-busca-estabelecimentos
+      *ngIf="isLoggedIn && abaAtiva === 'buscar'"
+      (selecionarEstabelecimento)="onEstabelecimentoSelecionado($event)">
+    </app-busca-estabelecimentos>
+
+    <!-- SEÇÃO 2: FORMULÁRIO DE AGENDAMENTO / LOGIN -->
+    <app-agendamento
+      *ngIf="!isLoggedIn || abaAtiva === 'agendamentos'">
+    </app-agendamento>
+
+    <!-- SEÇÕES SECUNDÁRIAS (PLACEHOLDERS EM DESENVOLVIMENTO) -->
+    <div class="container-em-breve" *ngIf="isLoggedIn && ['historico', 'favoritos', 'veiculos', 'perfil', 'alterar-senha'].includes(abaAtiva)">
+      <div class="card-em-breve">
+        <h2>🛠️ Modulo em Construção</h2>
+        <p>Você selecionou a aba: <strong>{{ abaAtiva | uppercase }}</strong></p>
+        <p>Em breve esta funcionalidade estará totalmente disponível!</p>
+        <button (click)="mudarAba('buscar')" class="btn-voltar">Voltar para a Busca</button>
+      </div>
+    </div>
+  </main>
+</div>
