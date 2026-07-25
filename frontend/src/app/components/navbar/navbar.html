@@ -1,0 +1,36 @@
+<header class="navbar-header">
+  <div class="logo" (click)="selecionarAba('buscar')">
+    <span>🚗</span> SmartWash
+  </div>
+
+  <nav class="nav-links">
+    <button
+      class="nav-btn"
+      [class.active]="abaAtiva === 'buscar'"
+      (click)="selecionarAba('buscar')">
+      🔍 Buscar Lava-Rápido
+    </button>
+    <button
+      class="nav-btn"
+      [class.active]="abaAtiva === 'agendamentos'"
+      (click)="selecionarAba('agendamentos')">
+      📅 Agendamentos
+    </button>
+  </nav>
+
+  <div class="menu-dropdown-container">
+    <button class="menu-btn" (click)="toggleMenu()">
+      👤 Menu ▾
+    </button>
+
+    <div class="dropdown-menu" *ngIf="menuAberto">
+      <button (click)="selecionarAba('historico')">📜 Histórico de Agendamentos</button>
+      <button (click)="selecionarAba('favoritos')">⭐ Estabelecimentos Favoritos</button>
+      <button (click)="selecionarAba('veiculos')">🚗 Meus Veículos</button>
+      <button (click)="selecionarAba('perfil')">👤 Meu Perfil</button>
+      <button (click)="selecionarAba('alterar-senha')">🔒 Alterar Senha</button>
+      <hr>
+      <button class="logout-item" (click)="executarLogout()">🚪 Sair</button>
+    </div>
+  </div>
+</header>
