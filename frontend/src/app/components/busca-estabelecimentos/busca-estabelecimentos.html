@@ -1,0 +1,53 @@
+<div class="busca-container">
+  <div class="search-header">
+    <h2>🔍 Encontre o Lava-Rápido Ideal</h2>
+    <p>Escolha um estabelecimento parceiro para realizar o seu agendamento.</p>
+
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="termoBusca"
+        placeholder="Digite o nome do lava-rápido ou endereço..."
+        class="form-control"
+      />
+    </div>
+  </div>
+
+  <div *ngIf="carregando" class="loading">
+    Carregando estabelecimentos...
+  </div>
+
+  <div *ngIf="!carregando && estabelecimentosFiltrados.length === 0" class="empty">
+    Nenhum lava-rápido encontrado.
+  </div>
+
+  <div class="grid-estabelecimentos" *ngIf="!carregando">
+    <div
+      class="card-estabelecimento"
+      *ngFor="let e of estabelecimentosFiltrados"
+      (click)="agendar(e)">
+
+      <div class="card-header">
+        <span class="foto-placeholder">🚗</span>
+        <button
+          class="btn-fav"
+          [class.favoritado]="e.is_favorito"
+          (click)="favoritar(e, $event)"
+          title="Favoritar">
+          {{ e.is_favorito ? '★' : '☆' }}
+        </button>
+      </div>
+
+      <div class="card-body">
+        <h3>{{ e.nome_fantasia }}</h3>
+        <p class="endereco">📍 {{ e.endereco }}</p>
+        <p class="telefone">📞 {{ e.telefone }}</p>
+        <p class="descricao" *ngIf="e.descricao">{{ e.descricao }}</p>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-agendar">Agendar Lavagem</button>
+      </div>
+    </div>
+  </div>
+</div>
