@@ -1,0 +1,63 @@
+<div class="agendamento-container">
+  <h2>🚗 SmartWash - Agendamento Online</h2>
+
+  <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+  <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
+  <div *ngIf="!isLoggedIn" class="login-box">
+    <h3>Entrar na Conta</h3>
+    <div class="form-group">
+      <label>Usuário:</label>
+      <input type="text" [(ngModel)]="usernameInput" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Senha:</label>
+      <input type="password" [(ngModel)]="passwordInput" class="form-control">
+    </div>
+    <button (click)="fazerLogin()" class="btn-primary">Entrar</button>
+  </div>
+
+  <div *ngIf="isLoggedIn">
+    <div class="user-header">
+      <span>Status: <strong>Autenticado</strong></span>
+      <button (click)="fazerLogout()" class="btn-logout">Sair</button>
+    </div>
+
+    <form (ngSubmit)="realizarAgendamento()">
+      <div class="form-group">
+        <label>Escolha o Serviço:</label>
+        <div class="cards-servico">
+          <div
+            *ngFor="let s of servicos"
+            class="card-servico"
+            [class.selected]="servicoSelecionadoId === s.id"
+            (click)="servicoSelecionadoId = s.id">
+            <h4>{{ s.nome }}</h4>
+            <p>{{ s.descricao }}</p>
+            <span class="preco">R$ {{ s.preco }}</span>
+            <span class="duracao">⏱️ {{ s.duracao_em_minutos }} min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Selecione o seu Veículo:</label>
+        <select [(ngModel)]="veiculoSelecionadoId" name="veiculo" class="form-control">
+          <option [ngValue]="null">-- Selecione --</option>
+          <option *ngFor="let v of veiculos" [value]="v.id">
+            {{ v.modelo }} - {{ v.placa }} ({{ v.marca }})
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Data e Horário Pretendido:</label>
+        <input type="datetime-local" [(ngModel)]="dataHoraInicio" name="dataHoraInicio" class="form-control">
+      </div>
+
+      <button type="submit" class="btn-agendar" [disabled]="carregando">
+        {{ carregando ? 'A processar...' : 'Confirmar Agendamento' }}
+      </button>
+    </form>
+  </div>
+</div>
