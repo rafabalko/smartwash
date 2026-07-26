@@ -38,7 +38,7 @@ export class AgendamentoComponent implements OnInit {
   fazerLogin(): void {
     this.mensagemErro = '';
     this.apiService.login(this.usernameInput, this.passwordInput).subscribe({
-      next: (res) => {
+      next: (res: { token: string }) => {
         localStorage.setItem('auth_token', res.token);
         this.isLoggedIn = true;
         this.carregarDados();
@@ -55,14 +55,15 @@ export class AgendamentoComponent implements OnInit {
   }
 
   carregarDados(): void {
-    this.apiService.getServicos().subscribe({
-      next: (data) => (this.servicos = data),
-      error: (err) => console.error('Erro ao buscar serviços', err)
+    // Busca os serviços do estabelecimento (passando 1 como id padrão ou filtro geral)
+    this.apiService.getServicosPorEstabelecimento(1).subscribe({
+      next: (data: Servico[]) => (this.servicos = data),
+      error: (err: any) => console.error('Erro ao buscar serviços', err)
     });
 
     this.apiService.getVeiculos().subscribe({
-      next: (data) => (this.veiculos = data),
-      error: (err) => console.error('Erro ao buscar veículos', err)
+      next: (data: Veiculo[]) => (this.veiculos = data),
+      error: (err: any) => console.error('Erro ao buscar veículos', err)
     });
   }
 
