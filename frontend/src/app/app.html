@@ -33,5 +33,9 @@
         <button (click)="mudarAba('buscar')" class="btn-voltar">Voltar para a Busca</button>
       </div>
     </div>
+    <!-- SEÇÃO 4: DASHBOARD ADMIN -->
+    <app-dashboard-admin
+      *ngIf="isLoggedIn && abaAtiva === 'dashboard'">
+    </app-dashboard-admin>
   </main>
 </div>
