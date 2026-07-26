@@ -120,4 +120,16 @@ export class ApiService {
   atualizarStatusAgendamento(agendamentoId: number, status: string): Observable<Agendamento> {
     return this.http.patch<Agendamento>(`${this.baseUrl}/agendamentos/${agendamentoId}/`, { status });
   }
+// Gestão de Serviços (CRUD)
+  cadastrarServico(payload: Partial<Servico>): Observable<Servico> {
+    return this.http.post<Servico>(`${this.baseUrl}/servicos/`, payload);
+  }
+
+  atualizarServico(id: number, payload: Partial<Servico>): Observable<Servico> {
+    return this.http.patch<Servico>(`${this.baseUrl}/servicos/${id}/`, payload);
+  }
+
+  deletarServico(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/servicos/${id}/`);
+  }
 }

@@ -1,0 +1,62 @@
+<div class="servicos-container">
+  <h2>🛠️ Gestão do Catálogo de Serviços</h2>
+
+  <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+  <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
+  <div class="card-cadastro">
+    <h3>{{ idEdicao ? '✏️ Editar Serviço' : '➕ Adicionar Novo Serviço' }}</h3>
+    <form (ngSubmit)="salvarServico()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome do Serviço:</label>
+          <input type="text" [(ngModel)]="nomeInput" name="nome" placeholder="Ex: Lavagem DetaIhada" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Preço (R$):</label>
+          <input type="number" step="0.01" [(ngModel)]="precoInput" name="preco" placeholder="Ex: 80.00" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Duração (Minutos):</label>
+          <input type="number" [(ngModel)]="duracaoInput" name="duracao" placeholder="Ex: 45" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Descrição:</label>
+        <textarea [(ngModel)]="descricaoInput" name="descricao" rows="2" placeholder="Descreva os detalhes do serviço..." class="form-control"></textarea>
+      </div>
+
+      <div class="btn-group">
+        <button type="submit" class="btn-salvar">
+          {{ idEdicao ? 'Atualizar Serviço' : 'Cadastrar Serviço' }}
+        </button>
+        <button type="button" *ngIf="idEdicao" (click)="limparFormulario()" class="btn-cancelar">
+          Cancelar Edição
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card-tabela">
+    <h3>📋 Serviços Cadastrados</h3>
+    <div *ngIf="carregando" class="text-muted">Carregando catálogo...</div>
+
+    <div class="grid-servicos" *ngIf="!carregando">
+      <div class="card-item-servico" *ngFor="let s of servicos">
+        <div class="servico-detalhes">
+          <h4>{{ s.nome }}</h4>
+          <p class="desc">{{ s.descricao }}</p>
+          <div class="tags">
+            <span class="preco">R$ {{ s.preco }}</span>
+            <span class="duracao">⏱️ {{ s.duracao_em_minutos }} min</span>
+          </div>
+        </div>
+        <div class="acoes">
+          <button (click)="editarServico(s)" class="btn-editar">✏️ Editar</button>
+          <button (click)="excluirServico(s.id)" class="btn-excluir">🗑️ Excluir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

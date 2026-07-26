@@ -1,0 +1,115 @@
+.servicos-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 20px;
+  font-family: Arial, sans-serif;
+
+  h2 { color: #2c3e50; text-align: center; margin-bottom: 24px; }
+}
+
+.card-cadastro, .card-tabela {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+
+  h3 { margin-top: 0; color: #34495e; font-size: 1.1rem; margin-bottom: 16px; }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+  label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 0.9rem; color: #555; }
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+
+  .btn-salvar {
+    flex: 1;
+    padding: 12px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover { background: #219150; }
+  }
+
+  .btn-cancelar {
+    padding: 12px 20px;
+    background: #7f8c8d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+}
+
+.grid-servicos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+
+  .card-item-servico {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    h4 { margin: 0 0 8px 0; color: #2c3e50; }
+    .desc { font-size: 0.85rem; color: #7f8c8d; margin-bottom: 12px; }
+
+    .tags {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 12px;
+      .preco { color: #27ae60; }
+      .duracao { color: #2980b9; font-size: 0.85rem; }
+    }
+
+    .acoes {
+      display: flex;
+      gap: 8px;
+      button {
+        flex: 1;
+        padding: 6px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.8rem;
+      }
+      .btn-editar { background: #ebf5fb; color: #2980b9; }
+      .btn-excluir { background: #fadbd8; color: #c0392b; }
+    }
+  }
+}
+
+.alert {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  &-success { background: #d4edda; color: #155724; }
+  &-danger { background: #f8d7da; color: #721c24; }
+}

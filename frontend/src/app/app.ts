@@ -5,6 +5,7 @@ import { BuscaEstabelecimentosComponent } from './components/busca-estabelecimen
 import { AgendamentoComponent } from './components/agendamento/agendamento';
 import { MeusVeiculosComponent } from './components/meus-veiculos/meus-veiculos';
 import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin';
+import { GestaoServicosComponent } from './components/gestao-servicos/gestao-servicos';
 import { Estabelecimento } from './services/api';
 
 @Component({
@@ -16,7 +17,8 @@ import { Estabelecimento } from './services/api';
     BuscaEstabelecimentosComponent,
     AgendamentoComponent,
     MeusVeiculosComponent,
-    DashboardAdminComponent
+    DashboardAdminComponent,
+    GestaoServicosComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
