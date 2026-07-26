@@ -116,4 +116,8 @@ export class ApiService {
   criarAgendamento(payload: any): Observable<Agendamento> {
     return this.http.post<Agendamento>(`${this.baseUrl}/agendamentos/`, payload);
   }
+
+  atualizarStatusAgendamento(agendamentoId: number, status: string): Observable<Agendamento> {
+    return this.http.patch<Agendamento>(`${this.baseUrl}/agendamentos/${agendamentoId}/`, { status });
+  }
 }

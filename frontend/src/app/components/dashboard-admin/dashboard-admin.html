@@ -1,7 +1,9 @@
 <div class="dashboard-container">
   <h2>📊 Painel de Controle - Lava-Rápido</h2>
 
-  <!-- CARDS DE INDICADORES / METRICAS -->
+  <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+  <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
   <div class="metrics-grid">
     <div class="metric-card pendentes">
       <span class="icon">⏳</span>
@@ -26,7 +28,6 @@
     </div>
   </div>
 
-  <!-- TABELA DE AGENDAMENTOS -->
   <div class="card-tabela">
     <h3>📋 Agendamentos Recebidos</h3>
 
@@ -42,7 +43,8 @@
             <th>Veículo</th>
             <th>Serviço</th>
             <th>Data / Horário</th>
-            <th>Status</th>
+            <th>Status Atual</th>
+            <th>Alterar Status</th>
           </tr>
         </thead>
         <tbody>
@@ -56,6 +58,16 @@
               <span class="badge" [ngClass]="a.status.toLowerCase()">
                 {{ a.status }}
               </span>
+            </td>
+            <td>
+              <select
+                [ngModel]="a.status"
+                (ngModelChange)="alterarStatus(a, $event)"
+                class="select-status">
+                <option *ngFor="let op of statusOpcoes" [value]="op.value">
+                  {{ op.label }}
+                </option>
+              </select>
             </td>
           </tr>
         </tbody>
