@@ -1,0 +1,42 @@
+<div class="clientes-container">
+  <h2>👥 Base de Clientes do Lava-Rápido</h2>
+
+  <div class="card-busca">
+    <input
+      type="text"
+      [(ngModel)]="termoBusca"
+      placeholder="🔍 Buscar por nome do cliente, veículo ou placa..."
+      class="form-control"
+    />
+  </div>
+
+  <div class="card-tabela">
+    <h3>📋 Relação de Clientes Atendidos</h3>
+
+    <div *ngIf="carregando" class="text-muted">Carregando lista de clientes...</div>
+    <div *ngIf="!carregando && clientesFiltrados.length === 0" class="text-muted">Nenhum cliente encontrado.</div>
+
+    <div class="table-responsive" *ngIf="!carregando && clientesFiltrados.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome do Cliente</th>
+            <th>Veículo Registado</th>
+            <th>Placa</th>
+            <th>Total de Lavagens</th>
+            <th>Última Visita</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of clientesFiltrados">
+            <td><strong>{{ c.nome }}</strong></td>
+            <td>{{ c.veiculo }}</td>
+            <td><code>{{ c.placa }}</code></td>
+            <td><span class="badge-count">{{ c.totalAgendamentos }} lavagem(ns)</span></td>
+            <td>{{ c.ultimoAgendamento | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

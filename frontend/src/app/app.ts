@@ -6,6 +6,7 @@ import { AgendamentoComponent } from './components/agendamento/agendamento';
 import { MeusVeiculosComponent } from './components/meus-veiculos/meus-veiculos';
 import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin';
 import { GestaoServicosComponent } from './components/gestao-servicos/gestao-servicos';
+import { ClientesAdminComponent } from './components/clientes-admin/clientes-admin';
 import { Estabelecimento } from './services/api';
 
 @Component({
@@ -18,7 +19,8 @@ import { Estabelecimento } from './services/api';
     AgendamentoComponent,
     MeusVeiculosComponent,
     DashboardAdminComponent,
-    GestaoServicosComponent
+    GestaoServicosComponent,
+    ClientesAdminComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
