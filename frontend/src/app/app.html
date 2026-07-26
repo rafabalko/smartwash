@@ -45,5 +45,18 @@
     <app-clientes-admin
       *ngIf="isLoggedIn && abaAtiva === 'clientes'">
     </app-clientes-admin>
+
+    <app-meu-perfil
+      *ngIf="isLoggedIn && abaAtiva === 'perfil'">
+    </app-meu-perfil>
+
+    <div class="container-em-breve" *ngIf="isLoggedIn && ['historico', 'favoritos', 'alterar-senha'].includes(abaAtiva)">
+      <div class="card-em-breve">
+        <h2>🛠️ Módulo em Construção</h2>
+        <p>Você selecionou a aba: <strong>{{ abaAtiva | uppercase }}</strong></p>
+        <p>Em breve esta funcionalidade estará totalmente disponível!</p>
+        <button (click)="mudarAba('buscar')" class="btn-voltar">Voltar para a Busca</button>
+      </div>
+    </div>
   </main>
 </div>

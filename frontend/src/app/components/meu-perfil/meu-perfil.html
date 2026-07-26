@@ -1,0 +1,48 @@
+<div class="perfil-container">
+  <h2>👤 Meu Perfil</h2>
+
+  <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+  <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
+  <div *ngIf="carregando" class="text-muted">Carregando dados do perfil...</div>
+
+  <div class="card-perfil" *ngIf="!carregando && perfil">
+    <div class="user-header">
+      <div class="avatar-placeholder">👤</div>
+      <div>
+        <h3>{{ perfil.user.first_name || perfil.user.username }}</h3>
+        <p class="email">📧 {{ perfil.user.email || 'Email não informado' }}</p>
+        <span class="badge-tipo">{{ perfil.tipo }}</span>
+      </div>
+    </div>
+
+    <hr />
+
+    <h3>Dados Cadastrais</h3>
+    <form (ngSubmit)="salvarPerfil()">
+      <div class="form-group">
+        <label>Telefone / WhatsApp:</label>
+        <input type="text" [(ngModel)]="telefoneInput" name="telefone" placeholder="(00) 00000-0000" class="form-control" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data de Nascimento:</label>
+          <input type="date" [(ngModel)]="dataNascimentoInput" name="dataNascimento" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label>Gênero:</label>
+          <select [(ngModel)]="generoInput" name="genero" class="form-control">
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+            <option value="O">Outro</option>
+            <option value="N">Prefiro não informar</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-salvar">Salvar Alterações</button>
+    </form>
+  </div>
+</div>

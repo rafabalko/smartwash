@@ -7,6 +7,7 @@ import { MeusVeiculosComponent } from './components/meus-veiculos/meus-veiculos'
 import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin';
 import { GestaoServicosComponent } from './components/gestao-servicos/gestao-servicos';
 import { ClientesAdminComponent } from './components/clientes-admin/clientes-admin';
+import { MeuPerfilComponent } from './components/meu-perfil/meu-perfil';
 import { Estabelecimento } from './services/api';
 
 @Component({
@@ -20,7 +21,8 @@ import { Estabelecimento } from './services/api';
     MeusVeiculosComponent,
     DashboardAdminComponent,
     GestaoServicosComponent,
-    ClientesAdminComponent
+    ClientesAdminComponent,
+    MeuPerfilComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
