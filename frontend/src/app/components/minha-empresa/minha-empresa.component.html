@@ -1,0 +1,59 @@
+<div class="empresa-container">
+  <h2>Minha Empresa</h2>
+  <p class="subtitle">Gerencie os dados e o logótipo do seu Lava-Rápido.</p>
+
+  <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+  <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
+  <div *ngIf="carregando" class="carregando">Carregando informações da empresa...</div>
+
+  <div class="grid-empresa" *ngIf="!carregando">
+
+    <div class="card-secao">
+      <h3>Dados do Lava-Rápido</h3>
+      <form (ngSubmit)="salvarDadosEmpresa()">
+
+        <div class="foto-upload-container">
+          <div class="preview-foto">
+            <img
+              [src]="previewFoto ? previewFoto : formatarImagem(estabelecimento.imagem)"
+              alt="Logótipo da Empresa"
+              style="width: 100%; height: 100%; object-fit: cover;"
+              onerror="this.onerror=null; this.src='assets/img/lava-rapido-padrao.png';"
+            >
+          </div>
+          <div class="upload-btn-wrapper">
+            <button type="button" class="btn-upload">Escolher nova foto</button>
+            <input type="file" accept="image/*" (change)="onFileSelected($event)">
+          </div>
+        </div>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #edf2f7;" />
+
+        <div class="form-group">
+          <label>Nome Fantasia:</label>
+          <input type="text" [(ngModel)]="estabelecimento.nome_fantasia" name="nome_fantasia" class="form-control" required placeholder="Ex: Lava Rápido Express" />
+        </div>
+
+        <div class="form-group">
+          <label>Razão Social:</label>
+          <input type="text" [(ngModel)]="estabelecimento.razao_social" name="razao_social" class="form-control" placeholder="Ex: Lava Rápido Express LTDA" />
+        </div>
+
+        <div class="form-group">
+          <label>Telefone / WhatsApp:</label>
+          <input type="text" [(ngModel)]="estabelecimento.telefone" name="telefone" class="form-control" placeholder="(00) 00000-0000" />
+        </div>
+
+        <div class="form-group">
+          <label>Endereço Completo:</label>
+          <input type="text" [(ngModel)]="estabelecimento.endereco" name="endereco" class="form-control" placeholder="Rua / Av, Número - Bairro" />
+        </div>
+
+        <button type="submit" class="btn-salvar-empresa" [disabled]="salvando">
+          {{ salvando ? 'Salvando...' : 'Salvar Alterações' }}
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>

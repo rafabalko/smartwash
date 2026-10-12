@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,6 +25,9 @@ INSTALLED_APPS = [
     # App do Projeto
     'agendamentos',
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Deve vir no topo dos middlewares
@@ -57,8 +61,12 @@ WSGI_APPLICATION = 'smartwash_core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'smartwash_db',
+        'USER': 'postgres',
+        'PASSWORD': 'postgre2026#',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -79,3 +87,11 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'rafaelbalko@gmail.com'
+EMAIL_HOST_PASSWORD = 'uificfytkvaqmdpf'
+DEFAULT_FROM_EMAIL = 'SmartWash <rafaelbalko@gmail.com>'

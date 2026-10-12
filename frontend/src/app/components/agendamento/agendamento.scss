@@ -1,92 +1,154 @@
+/* =========================================
+   ESTILOS GERAIS DO FORMULÁRIO DE AGENDAMENTO
+========================================= */
+
 .agendamento-container {
-  max-width: 600px;
+  max-width: 800px;
   margin: 30px auto;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 0 20px;
   font-family: Arial, sans-serif;
-
-  h2 { text-align: center; color: #1a252f; margin-bottom: 20px; }
-}
-
-.login-box {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-}
-
-.user-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.form-group {
-  margin-bottom: 18px;
-  label { display: block; font-weight: bold; margin-bottom: 6px; }
-}
-
-.form-control {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
-}
-
-.cards-servico {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.card-servico {
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 12px;
-  cursor: pointer;
-  background: #fafafa;
-
-  &.selected {
-    border-color: #007bff;
-    background: #e7f1ff;
-  }
-
-  .preco { color: #28a745; font-weight: bold; display: block; }
-  .duracao { color: #6c757d; font-size: 0.85rem; }
-}
-
-.btn-primary, .btn-agendar {
-  width: 100%;
-  padding: 12px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-agendar { background: #28a745; }
-
-.btn-logout {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
 }
 
 .alert {
-  padding: 10px;
+  padding: 12px;
   border-radius: 6px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 0.88rem;
+
   &-success { background: #d4edda; color: #155724; }
   &-danger { background: #f8d7da; color: #721c24; }
+}
+
+.card-agendamento {
+  background: var(--bg-card, #ffffff);
+  color: var(--text-main, #1e293b);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid var(--border-color, #e2e8f0);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+  .estabelecimento-header {
+    border-bottom: 2px solid var(--border-color, #f0f2f5);
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    h2 { margin: 0 0 6px 0; color: var(--text-main, #1a252f); font-size: 1.5rem; }
+    .endereco { margin: 0; color: var(--text-muted, #7f8c8d); font-size: 0.9rem; }
+  }
+
+  h3, h2 { margin: 0 0 4px 0; color: var(--text-main, #2c3e50); }
+  .subtitle { margin: 0 0 20px 0; color: var(--text-muted, #7f8c8d); font-size: 0.88rem; }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-main, #444);
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 11px 14px;
+    background-color: var(--input-bg, #ffffff);
+    color: var(--text-main, #1e293b);
+    border: 1px solid var(--border-color, #ccc);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, background-color 0.3s ease, color 0.3s ease;
+
+    &:focus {
+      border-color: #3498db;
+    }
+  }
+
+  .aviso-telefone {
+    color: var(--text-muted, #718096);
+    font-size: 0.8rem;
+    display: block;
+    margin-top: 5px;
+  }
+}
+
+/* 🕒 ESTILO DA GRADE DE HORÁRIOS */
+.grid-horarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+
+  .btn-horario {
+    padding: 10px;
+    background: var(--input-bg, #f8f9fa);
+    border: 2px solid var(--border-color, #e2e8f0);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--text-main, #2d3748);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &:hover:not(:disabled) {
+      border-color: #3498db;
+      color: #3498db;
+      background: rgba(52, 152, 219, 0.1);
+    }
+
+    &.selecionado {
+      background: #3498db;
+      color: white;
+      border-color: #2980b9;
+    }
+
+    /* 🔴 HORÁRIO OCUPADO / OFUSCADO */
+    &.ocupado, &:disabled {
+      background: var(--border-color, #edf2f7);
+      border-color: var(--border-color, #cbd5e0);
+      color: var(--text-muted, #a0aec0);
+      opacity: 0.55;
+      cursor: not-allowed;
+
+      .label-ocupado {
+        font-size: 0.65rem;
+        text-decoration: none;
+        color: #e53e3e;
+        font-weight: bold;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+/* 🚀 BOTÃO DE ENVIAR */
+.btn-agendar {
+  width: 100%;
+  padding: 14px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background: #219653;
+  }
+
+  &:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+  }
 }

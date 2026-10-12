@@ -34,17 +34,36 @@
     }
   }
 
-  .btn-cadastrar {
-    width: 100%;
-    padding: 12px;
-    background: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
+  .form-actions {
+    display: flex;
+    gap: 10px;
 
-    &:hover { background: #219150; }
+    .btn-cadastrar {
+      flex: 1;
+      padding: 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-cancelar {
+      padding: 12px 20px;
+      background: #e2e8f0;
+      color: #475569;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #cbd5e1;
+      }
+    }
   }
 }
 
@@ -55,7 +74,7 @@
 
   .grid-veiculos {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 16px;
   }
 
@@ -75,17 +94,37 @@
       .placa strong { color: #2980b9; }
     }
 
-    .btn-deletar {
-      background: #f8d7da;
-      color: #721c24;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: bold;
+    .acoes-veiculo {
+      display: flex;
+      gap: 8px;
 
-      &:hover { background: #f5c6cb; }
+      .btn-editar {
+        background: #f39c12;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: bold;
+        transition: background-color 0.2s;
+
+        &:hover { background: #e67e22; }
+      }
+
+      .btn-deletar {
+        background: #f8d7da;
+        color: #721c24;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: bold;
+        transition: background-color 0.2s;
+
+        &:hover { background: #f5c6cb; }
+      }
     }
   }
 }

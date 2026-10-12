@@ -1,0 +1,139 @@
+<div class="historico-container">
+
+  <div class="header-historico">
+    <h2>Histórico de agendamentos</h2>
+  </div>
+
+  <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+  <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
+  <div class="filtro-box">
+    <label>Escolha o período que deseja filtrar</label>
+    <div class="inputs-data">
+      <div class="input-icon">
+        <input type="date" class="form-control" [(ngModel)]="dataInicio">
+      </div>
+      <div class="input-icon">
+        <input type="date" class="form-control" [(ngModel)]="dataFim">
+      </div>
+    </div>
+    <button class="btn-pesquisar" (click)="pesquisar()">
+      <svg width="16" height="16" fill="currentColor" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px; flex-shrink: 0;">
+        <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+      </svg>
+      Pesquisar
+    </button>
+  </div>
+
+  <div class="legenda-status">
+    <div class="legenda-header" (click)="toggleLegenda()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+      <span>Legenda dos status</span>
+      <span class="seta-toggle">{{ legendaAberta ? '⬆' : '⬇' }}</span>
+    </div>
+
+    <div class="legenda-grid" *ngIf="legendaAberta">
+      <div class="legenda-item"><span class="icone-status pendente">⏳</span> Pendente</div>
+      <div class="legenda-item"><span class="icone-status andamento">🔄</span> Em Andamento</div>
+      <div class="legenda-item"><span class="icone-status concluido">✓</span> Concluído</div>
+      <div class="legenda-item"><span class="icone-status cancelado">✕</span> Cancelado</div>
+    </div>
+  </div>
+
+  <p class="contador-resultados">{{ agendamentosFiltrados.length }} agendamento(s) encontrado(s)</p>
+
+  <div *ngIf="agendamentosFiltrados.length === 0" class="sem-agendamentos">
+    <p *ngIf="!buscaRealizada">Você não possui agendamentos marcados para hoje.</p>
+    <p *ngIf="buscaRealizada">Nenhum agendamento encontrado neste período.</p>
+  </div>
+
+  <div class="lista-cards" *ngIf="agendamentosFiltrados.length > 0">
+    <ng-container *ngFor="let a of agendamentosFiltrados">
+
+      <div class="card-historico">
+        <div class="card-main">
+          <div class="info-principal">
+            <h4>{{ a.estabelecimento_nome || 'Lava-Rápido' }}</h4>
+            <p class="servico">{{ a.servico_nome || 'Serviço' }}</p>
+            <p class="veiculo">Veículo: {{ a.veiculo_modelo }} ({{ a.veiculo_placa }})</p>
+            <p class="data-hora">{{ a.data_hora_inicio | date:'dd/MMM/yyyy - HH:mm' | uppercase }}</p>
+          </div>
+
+          <div class="status-bolinha" [ngClass]="getStatusClass(a.status)" [title]="formatarStatus(a.status)">
+            <span *ngIf="a.status === 'PENDENTE'">⏳</span>
+            <span *ngIf="a.status === 'EM_ANDAMENTO'">🔄</span>
+            <span *ngIf="a.status === 'CONCLUIDO'">✓</span>
+            <span *ngIf="a.status === 'CANCELADO'">✕</span>
+          </div>
+        </div>
+
+        <div class="card-acoes">
+          <button *ngIf="a.status !== 'CANCELADO' && a.status !== 'CONCLUIDO'" class="acao-btn acao-cancelar" (click)="abrirModalCancelamento(a)">
+            Cancelar Agendamento
+          </button>
+
+          <button *ngIf="a.status === 'CONCLUIDO' && !a.avaliacao_id" class="acao-btn acao-avaliar" (click)="abrirModalAvaliacao(a)">
+            ⭐ Avaliar Serviço
+          </button>
+
+          <button *ngIf="a.status === 'CONCLUIDO' && a.avaliacao_id" class="acao-btn acao-ver-aval" (click)="abrirModalEditarAvaliacao(a)">
+            📝 Ver / Editar Avaliação
+          </button>
+
+          <div *ngIf="a.status === 'CANCELADO' && a.motivo_cancelamento" class="motivo-box">
+            <strong>Motivo:</strong> {{ a.motivo_cancelamento }}
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="exibirModalCancelamento">
+  <div class="modal-content">
+    <h3>Confirmar Cancelamento</h3>
+    <p>Tem certeza que deseja cancelar este agendamento?</p>
+
+    <div class="form-group mt-3">
+      <label style="display:block; font-weight:bold; margin-bottom: 5px;">Motivo do cancelamento (Opcional):</label>
+      <textarea [(ngModel)]="motivoCancelamentoText" class="form-control" placeholder="Ex: Aconteceu um imprevisto, etc."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="fecharModalCancelamento()">Voltar</button>
+      <button class="btn btn-danger" (click)="confirmarCancelamento()">Sim, Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="exibirModalAvaliacao">
+  <div class="modal-content">
+    <h3>{{ modoEdicaoAvaliacao ? 'Editar Avaliação' : 'Avaliar Serviço' }}</h3>
+    <p>Como foi o serviço em <strong>{{ agendamentoParaAvaliar?.estabelecimento_nome }}</strong>?</p>
+
+    <div class="estrelas-avaliacao">
+      <span class="star-item" (click)="definirNota(1)">{{ notaAvaliacao >= 1 ? '★' : '☆' }}</span>
+      <span class="star-item" (click)="definirNota(2)">{{ notaAvaliacao >= 2 ? '★' : '☆' }}</span>
+      <span class="star-item" (click)="definirNota(3)">{{ notaAvaliacao >= 3 ? '★' : '☆' }}</span>
+      <span class="star-item" (click)="definirNota(4)">{{ notaAvaliacao >= 4 ? '★' : '☆' }}</span>
+      <span class="star-item" (click)="definirNota(5)">{{ notaAvaliacao >= 5 ? '★' : '☆' }}</span>
+    </div>
+
+    <div class="form-group mt-3">
+      <label style="display:block; font-weight:bold; margin-bottom: 5px;">Deixe um comentário (opcional):</label>
+      <textarea [(ngModel)]="comentarioAvaliacao" class="form-control" rows="3" placeholder="Ótimo atendimento..."></textarea>
+    </div>
+
+    <div class="modal-actions modal-actions-avaliacao">
+      <button *ngIf="modoEdicaoAvaliacao && agendamentoParaAvaliar?.avaliacao_id" class="btn btn-danger btn-excluir-aval" (click)="excluirAvaliacaoDoAgendamento()">
+        🗑️ Apagar
+      </button>
+      <div class="botoes-direita">
+        <button class="btn btn-secondary" (click)="fecharModalAvaliacao()">Cancelar</button>
+        <button class="btn btn-primary btn-salvar-aval" (click)="salvarOuAtualizarAvaliacao()">
+          {{ modoEdicaoAvaliacao ? 'Salvar' : 'Enviar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,36 +1,76 @@
-<header class="navbar-header">
-  <div class="logo" (click)="selecionarAba('buscar')">
-    <span>🚗</span> SmartWash
-  </div>
+<nav class="navbar" *ngIf="isLoggedIn">
+  <div class="nav-container">
 
-  <nav class="nav-links">
-    <button
-      class="nav-btn"
-      [class.active]="abaAtiva === 'buscar'"
-      (click)="selecionarAba('buscar')">
-      🔍 Buscar Lava-Rápido
-    </button>
-    <button
-      class="nav-btn"
-      [class.active]="abaAtiva === 'agendamentos'"
-      (click)="selecionarAba('agendamentos')">
-      📅 Agendamentos
-    </button>
-  </nav>
-
-  <div class="menu-dropdown-container">
-    <button class="menu-btn" (click)="toggleMenu()">
-      👤 Menu ▾
-    </button>
-
-    <div class="dropdown-menu" *ngIf="menuAberto">
-      <button (click)="selecionarAba('historico')">📜 Histórico de Agendamentos</button>
-      <button (click)="selecionarAba('favoritos')">⭐ Estabelecimentos Favoritos</button>
-      <button (click)="selecionarAba('veiculos')">🚗 Meus Veículos</button>
-      <button (click)="selecionarAba('perfil')">👤 Meu Perfil</button>
-      <button (click)="selecionarAba('alterar-senha')">🔒 Alterar Senha</button>
-      <hr>
-      <button class="logout-item" (click)="executarLogout()">🚪 Sair</button>
+    <div class="nav-brand" (click)="selecionarAba(userTipo === 'ADMIN' ? 'dashboard' : 'buscar')">
+    <img src="logo_smartwash_claro.png" alt="SmartWash Logo" class="navbar-logo">
     </div>
+
+    <button class="btn-hamburger" (click)="toggleMenu()">
+      {{ menuAberto ? '✖' : '☰' }}
+    </button>
+
+    <ul class="nav-links" [class.open]="menuAberto">
+
+      <ng-container *ngIf="userTipo !== 'ADMIN'">
+        <li [class.active]="abaAtiva === 'buscar'" (click)="selecionarAba('buscar')">
+          Buscar
+        </li>
+        <li [class.active]="abaAtiva === 'agendamentos'" (click)="selecionarAba('agendamentos')">
+          Agendamentos
+        </li>
+      </ng-container>
+
+      <ng-container *ngIf="userTipo === 'ADMIN'">
+        <li [class.active]="abaAtiva === 'dashboard'" (click)="selecionarAba('dashboard')">
+          Painel
+        </li>
+
+        <li [class.active]="abaAtiva === 'clientes'" (click)="selecionarAba('clientes')">
+          Clientes
+        </li>
+
+        <li [class.active]="abaAtiva === 'servicos'" (click)="selecionarAba('servicos')">
+          Serviços
+        </li>
+      </ng-container>
+
+      <li class="dropdown-item" (click)="$event.stopPropagation()">
+        <button class="btn-user-dropdown" (click)="toggleMenuPerfil()">
+          <span>Minha Conta</span> ▾
+        </button>
+
+        <div class="dropdown-menu" *ngIf="menuPerfilAberto">
+          <div class="dropdown-header">
+            <strong>{{ userTipo === 'ADMIN' ? 'Administrador' : 'Cliente' }}</strong>
+            <small>Gestão da Conta</small>
+          </div>
+          <hr />
+
+          <ng-container *ngIf="userTipo !== 'ADMIN'">
+            <div class="dropdown-option" (click)="selecionarAba('favoritos')">
+              ⭐ Meus Favoritos
+            </div>
+            <div class="dropdown-option" (click)="selecionarAba('veiculos')">
+              🚗 Meus Veículos
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="userTipo === 'ADMIN'">
+            <div class="dropdown-option" (click)="selecionarAba('empresa')">
+              🏢 Minha Empresa
+            </div>
+          </ng-container>
+
+          <div class="dropdown-option" (click)="selecionarAba('perfil')">
+            ✏️ Meu Perfil
+          </div>
+          <hr />
+          <div class="dropdown-option logout" (click)="executarLogout()">
+            🚪 Sair do Sistema
+          </div>
+        </div>
+      </li>
+
+    </ul>
   </div>
-</header>
+</nav>

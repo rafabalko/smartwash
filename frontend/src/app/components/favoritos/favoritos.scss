@@ -1,0 +1,142 @@
+.favoritos-container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 0 15px;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  .favoritos-header {
+    margin-bottom: 25px;
+    h2 {
+      color: #0f172a;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    p {
+      color: #64748b;
+      margin: 0;
+    }
+  }
+
+  .grid-estabelecimentos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .card-estabelecimento {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+
+      .logo-estabelecimento {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      }
+
+      .btn-fav {
+        background: transparent;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #f59e0b;
+        padding: 0;
+        margin-top: 5px;
+        transition: transform 0.2s;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    .card-body {
+      flex: 1;
+      display: flex; /* 👈 Transforma em container flex */
+      flex-direction: column; /* 👈 Organiza os itens em coluna */
+
+      h3 {
+        margin: 0 0 10px 0;
+        font-size: 18px;
+        color: #0284c7;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      /* Separei o endereço do telefone para aplicar a margem automática */
+      .endereco {
+        margin-top: auto; /* 👈 A MÁGICA AQUI: Empurra pro fundo! */
+        margin-bottom: 5px;
+        font-size: 13.5px;
+        color: #475569;
+        line-height: 1.4;
+      }
+
+      .telefone {
+        margin: 5px 0;
+        font-size: 13.5px;
+        color: #475569;
+        line-height: 1.4;
+      }
+    }
+
+    .card-footer {
+      margin-top: 20px;
+      .btn-agendar {
+        width: 100%;
+        background: #0284c7;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background: #0369a1;
+        }
+      }
+    }
+  }
+
+  .clicavel {
+    cursor: pointer;
+    text-decoration: none !important;
+  }
+
+  .clicavel-whats {
+    cursor: pointer;
+    transition: color 0.2s;
+    &:hover { color: #16a34a !important; }
+  }
+
+  .loading, .empty {
+    text-align: center;
+    padding: 40px;
+    background: #f8fafc;
+    border-radius: 8px;
+    color: #64748b;
+    border: 1px dashed #cbd5e1;
+  }
+}

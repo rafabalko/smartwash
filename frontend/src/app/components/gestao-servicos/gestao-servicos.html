@@ -1,11 +1,11 @@
 <div class="servicos-container">
-  <h2>🛠️ Gestão do Catálogo de Serviços</h2>
+  <h2>Gestão do Catálogo de Serviços</h2>
 
   <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
   <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
 
   <div class="card-cadastro">
-    <h3>{{ idEdicao ? '✏️ Editar Serviço' : '➕ Adicionar Novo Serviço' }}</h3>
+    <h3>{{ idEdicao ? 'Editar Serviço' : 'Adicionar Novo Serviço' }}</h3>
     <form (ngSubmit)="salvarServico()">
       <div class="form-row">
         <div class="form-group">
@@ -39,7 +39,7 @@
   </div>
 
   <div class="card-tabela">
-    <h3>📋 Serviços Cadastrados</h3>
+    <h3>Serviços Cadastrados</h3>
     <div *ngIf="carregando" class="text-muted">Carregando catálogo...</div>
 
     <div class="grid-servicos" *ngIf="!carregando">
@@ -49,12 +49,12 @@
           <p class="desc">{{ s.descricao }}</p>
           <div class="tags">
             <span class="preco">R$ {{ s.preco }}</span>
-            <span class="duracao">⏱️ {{ s.duracao_em_minutos }} min</span>
+            <span class="duracao">{{ s.duracao_em_minutos }} min</span>
           </div>
         </div>
         <div class="acoes">
-          <button (click)="editarServico(s)" class="btn-editar">✏️ Editar</button>
-          <button (click)="excluirServico(s.id)" class="btn-excluir">🗑️ Excluir</button>
+          <button (click)="editarServico(s)" class="btn-editar">Editar</button>
+          <button (click)="excluirServico(s.id)" class="btn-excluir">Excluir</button>
         </div>
       </div>
     </div>

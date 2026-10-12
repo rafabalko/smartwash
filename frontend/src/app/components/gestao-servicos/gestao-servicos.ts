@@ -14,6 +14,9 @@ export class GestaoServicosComponent implements OnInit {
   servicos: Servico[] = [];
   carregando: boolean = true;
 
+  // Definido como number garantido (evita o erro de tipo null)
+  idEstabelecimentoAtual: number = 0;
+
   // Campos do formulário
   idEdicao: number | null = null;
   nomeInput: string = '';
@@ -32,13 +35,34 @@ export class GestaoServicosComponent implements OnInit {
 
   carregarServicos(): void {
     this.carregando = true;
-    this.apiService.getServicosPorEstabelecimento(1).subscribe({ // Ajuste dinâmico se necessário
-      next: (data) => {
-        this.servicos = data;
-        this.carregando = false;
+
+    this.apiService.getMeuPerfil().subscribe({
+      next: (perfil: any) => {
+        // Pega o ID do estabelecimento retornado pelo serializer novo
+        const idEstabelecimento = perfil.estabelecimento_id || perfil.estabelecimento;
+
+        if (!idEstabelecimento) {
+          this.mensagemErro = 'Nenhum estabelecimento vinculado a este usuário.';
+          this.carregando = false;
+          return;
+        }
+
+        this.idEstabelecimentoAtual = Number(idEstabelecimento);
+
+        this.apiService.getServicosPorEstabelecimento(this.idEstabelecimentoAtual).subscribe({
+          next: (data: Servico[]) => {
+            this.servicos = data;
+            this.carregando = false;
+          },
+          error: (err: any) => {
+            console.error('Erro ao carregar serviços:', err);
+            this.carregando = false;
+          }
+        });
       },
       error: (err) => {
-        console.error('Erro ao carregar serviços:', err);
+        console.error('Erro ao carregar perfil:', err);
+        this.mensagemErro = 'Erro ao identificar a empresa do usuário.';
         this.carregando = false;
       }
     });
@@ -53,32 +77,35 @@ export class GestaoServicosComponent implements OnInit {
       return;
     }
 
-    const payload: Partial<Servico> = {
+    if (!this.idEstabelecimentoAtual) {
+      this.mensagemErro = 'ID do estabelecimento não carregado.';
+      return;
+    }
+
+    const payload: any = {
       nome: this.nomeInput,
       descricao: this.descricaoInput,
       preco: this.precoInput,
       duracao_em_minutos: this.duracaoInput,
-      ativo: true
+      ativo: true,
+      estabelecimento: this.idEstabelecimentoAtual
     };
 
     if (this.idEdicao) {
-      // Atualizar existente
       this.apiService.atualizarServico(this.idEdicao, payload).subscribe({
-        next: (atualizado) => {
-          const index = this.servicos.findIndex(s => s.id === this.idEdicao);
-          if (index !== -1) this.servicos[index] = atualizado;
+        next: () => {
           this.mensagemSucesso = 'Serviço atualizado com sucesso!';
           this.limparFormulario();
+          this.carregarServicos();
         },
         error: () => this.mensagemErro = 'Erro ao atualizar serviço.'
       });
     } else {
-      // Cadastrar novo
       this.apiService.cadastrarServico(payload).subscribe({
-        next: (novo) => {
-          this.servicos.push(novo);
+        next: () => {
           this.mensagemSucesso = 'Serviço cadastrado com sucesso!';
           this.limparFormulario();
+          this.carregarServicos();
         },
         error: () => this.mensagemErro = 'Erro ao cadastrar serviço.'
       });

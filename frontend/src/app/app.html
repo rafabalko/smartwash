@@ -1,62 +1,65 @@
-<div class="app-container">
-  <!-- Navbar Fixo no Topo para Usuários Logados -->
-  <app-navbar
-    *ngIf="isLoggedIn"
-    [abaAtiva]="abaAtiva"
-    (mudarAba)="mudarAba($event)"
-    (logout)="executarLogout()">
-  </app-navbar>
+<app-navbar
+  [isLoggedIn]="isLoggedIn"
+  [userTipo]="userTipo"
+  [abaAtiva]="abaAtiva"
+  (mudarAba)="mudarAba($event)"
+  (logout)="executarLogout()">
+</app-navbar>
 
-  <main class="main-content">
-    <!-- SEÇÃO 1: BUSCAR LAVA-RÁPIDOS (PÁGINA INICIAL DO CLIENTE) -->
+<main class="main-content">
+
+  <app-auth *ngIf="!isLoggedIn || abaAtiva === 'login'"></app-auth>
+
+  <ng-container *ngIf="isLoggedIn && userTipo !== 'ADMIN'">
     <app-busca-estabelecimentos
-      *ngIf="isLoggedIn && abaAtiva === 'buscar'"
+      *ngIf="abaAtiva === 'buscar'"
       (selecionarEstabelecimento)="onEstabelecimentoSelecionado($event)">
     </app-busca-estabelecimentos>
 
-    <!-- SEÇÃO 2: FORMULÁRIO DE AGENDAMENTO / LOGIN -->
+    <app-detalhes-estabelecimento
+      *ngIf="abaAtiva === 'detalhes-estabelecimento'"
+      [estabelecimento]="estabelecimentoSelecionado!"
+      (irParaAgendamento)="irParaFormularioAgendamento()"
+      (voltarBusca)="voltarParaBusca()">
+    </app-detalhes-estabelecimento>
+
+    <app-favoritos
+      *ngIf="abaAtiva === 'favoritos'"
+      (selecionarEstabelecimento)="onEstabelecimentoSelecionado($event)">
+    </app-favoritos>
+
     <app-agendamento
-      *ngIf="!isLoggedIn || abaAtiva === 'agendamentos'">
+      *ngIf="abaAtiva === 'novo-agendamento'"
+      [estabelecimento]="estabelecimentoSelecionado"
+      (mudarAba)="mudarAba($event)">
     </app-agendamento>
 
-    <!-- SEÇÃO 3: MEUS VEÍCULOS -->
-    <app-meus-veiculos
-      *ngIf="isLoggedIn && abaAtiva === 'veiculos'">
-    </app-meus-veiculos>
+    <app-historico-agendamentos
+      *ngIf="abaAtiva === 'agendamentos'">
+    </app-historico-agendamentos>
 
-    <!-- SEÇÕES SECUNDÁRIAS (PLACEHOLDERS EM DESENVOLVIMENTO) -->
-    <div class="container-em-breve" *ngIf="isLoggedIn && ['historico', 'favoritos', 'perfil', 'alterar-senha'].includes(abaAtiva)">
-      <div class="card-em-breve">
-        <h2>🛠️ Módulo em Construção</h2>
-        <p>Você selecionou a aba: <strong>{{ abaAtiva | uppercase }}</strong></p>
-        <p>Em breve esta funcionalidade estará totalmente disponível!</p>
-        <button (click)="mudarAba('buscar')" class="btn-voltar">Voltar para a Busca</button>
-      </div>
-    </div>
-    <!-- SEÇÃO 4: DASHBOARD ADMIN -->
-    <app-dashboard-admin
-      *ngIf="isLoggedIn && abaAtiva === 'dashboard'">
-    </app-dashboard-admin>
+    <app-meus-veiculos *ngIf="abaAtiva === 'veiculos'"></app-meus-veiculos>
+  </ng-container>
 
-    <app-gestao-servicos
-      *ngIf="isLoggedIn && abaAtiva === 'servicos'">
-    </app-gestao-servicos>
+  <ng-container *ngIf="isLoggedIn && userTipo === 'ADMIN'">
+    <app-dashboard-admin *ngIf="abaAtiva === 'dashboard'"></app-dashboard-admin>
 
-    <app-clientes-admin
-      *ngIf="isLoggedIn && abaAtiva === 'clientes'">
-    </app-clientes-admin>
+    <app-clientes-admin *ngIf="abaAtiva === 'clientes'"></app-clientes-admin>
 
-    <app-meu-perfil
-      *ngIf="isLoggedIn && abaAtiva === 'perfil'">
-    </app-meu-perfil>
+    <app-agendamento
+      *ngIf="abaAtiva === 'agendamento'"
+      [estabelecimento]="estabelecimentoSelecionado">
+    </app-agendamento>
 
-    <div class="container-em-breve" *ngIf="isLoggedIn && ['historico', 'favoritos', 'alterar-senha'].includes(abaAtiva)">
-      <div class="card-em-breve">
-        <h2>🛠️ Módulo em Construção</h2>
-        <p>Você selecionou a aba: <strong>{{ abaAtiva | uppercase }}</strong></p>
-        <p>Em breve esta funcionalidade estará totalmente disponível!</p>
-        <button (click)="mudarAba('buscar')" class="btn-voltar">Voltar para a Busca</button>
-      </div>
-    </div>
-  </main>
-</div>
+    <app-historico-agendamentos
+      *ngIf="abaAtiva === 'historico'">
+    </app-historico-agendamentos>
+
+    <app-gestao-servicos *ngIf="abaAtiva === 'servicos'"></app-gestao-servicos>
+
+    <app-minha-empresa *ngIf="abaAtiva === 'empresa'"></app-minha-empresa>
+  </ng-container>
+
+  <app-meu-perfil *ngIf="isLoggedIn && abaAtiva === 'perfil'"></app-meu-perfil>
+
+</main>

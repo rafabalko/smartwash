@@ -1,0 +1,280 @@
+<div class="auth-wrapper">
+  <div class="card-auth">
+
+    <div class="auth-header">
+      <img src="logo_smartwash.png" alt="SmartWash Logo" class="auth-logo" />
+      <p>
+        {{
+          etapaVerificacao ? 'Confirmação de Segurança' :
+          modoRecuperacaoSenha ? 'Recuperação de Senha' :
+          (modoCadastro ? (modoEmpresaCadastro ? 'Cadastre seu Lava-Rápido' : 'Crie sua conta para começar') : 'Faça login para continuar')
+        }}
+      </p>
+    </div>
+
+    <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
+    <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
+
+    <form *ngIf="!modoCadastro && !etapaVerificacao && !modoRecuperacaoSenha" (ngSubmit)="fazerLogin()" autocomplete="on">
+      <div class="form-group">
+        <label>E-mail:</label>
+        <input type="email" [(ngModel)]="emailInput" name="email" placeholder="Digite seu e-mail" class="form-control" autocomplete="email" required />
+      </div>
+
+      <div class="form-group">
+        <label>Senha:</label>
+        <div style="position: relative; display: flex; align-items: center;">
+
+          <input
+            [type]="mostrarSenha ? 'text' : 'password'"
+            [(ngModel)]="passwordInput"
+            name="password"
+            placeholder="Digite sua senha"
+            class="form-control"
+            style="padding-right: 40px;"
+            autocomplete="current-password"
+            required
+          />
+
+          <span
+            (mousedown)="$event.preventDefault()"
+            (click)="toggleMostrarSenha()"
+            style="position: absolute; right: 12px; cursor: pointer; color: #7f8c8d; display: flex;"
+            title="Mostrar/Ocultar Senha">
+            <svg *ngIf="mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg *ngIf="!mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          </span>
+
+        </div>
+
+        <div style="text-align: right; margin-top: 5px;">
+          <a style="cursor: pointer; font-size: 0.85rem; color: #3498db; text-decoration: none;" (click)="abrirRecuperacaoSenha()">
+            Esqueceu a senha?
+          </a>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="carregando">
+        {{ carregando ? 'Entrando...' : 'Entrar no Sistema' }}
+      </button>
+
+      <div class="auth-footer">
+        <p>Não tem uma conta? <a style="cursor: pointer;" (click)="alternarModo()">Cadastre-se aqui!</a></p>
+        <p style="margin-top: 10px;">
+        <p>É dono de um Lava-Rápido? <a style="cursor: pointer;" (click)="alternarParaEmpresa()">Cadastre sua empresa aqui!</a></p>
+      </div>
+    </form>
+
+
+    <div *ngIf="modoRecuperacaoSenha">
+
+      <form *ngIf="etapaRecuperacao === 1" (ngSubmit)="solicitarRecuperacao()">
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px; text-align: center;">
+          Digite seu e-mail cadastrado. Enviaremos um código de 6 dígitos para você criar uma nova senha.
+        </p>
+        <div class="form-group">
+          <label>E-mail:</label>
+          <input type="email" [(ngModel)]="emailInput" name="email_recuperacao" placeholder="Digite seu e-mail" class="form-control" required />
+        </div>
+        <button type="submit" class="btn-primary" [disabled]="carregando">
+          {{ carregando ? 'Enviando...' : 'Receber Código por E-mail' }}
+        </button>
+        <div class="auth-footer" style="margin-top: 15px;">
+          <a style="cursor: pointer; color: #7f8c8d; font-weight: bold;" (click)="voltarParaLogin()">⬅ Voltar para o Login</a>
+        </div>
+      </form>
+
+      <form *ngIf="etapaRecuperacao === 2" (ngSubmit)="avancarParaSenha()">
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px; text-align: center;">
+          Código enviado para <strong>{{ emailInput }}</strong>.<br>
+        </p>
+        <div class="form-group">
+          <label>Código de Verificação:</label>
+          <input type="text" [(ngModel)]="codigoInput" name="codigo_rec" placeholder="123456" class="form-control text-center input-codigo" maxlength="6" style="font-size: 24px; letter-spacing: 6px;" required autocomplete="off" />
+        </div>
+        <button type="submit" class="btn-primary">Avançar ➔</button>
+        <div class="auth-footer" style="margin-top: 15px;">
+           <a style="cursor: pointer; color: #7f8c8d; font-weight: bold;" (click)="voltarParaLogin()">Cancelar</a>
+        </div>
+      </form>
+
+      <form *ngIf="etapaRecuperacao === 3" (ngSubmit)="confirmarNovaSenha()">
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px; text-align: center;">
+          Quase lá! Crie a sua nova senha de acesso.
+        </p>
+        <div class="form-group">
+          <label>Nova Senha:</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input [type]="mostrarSenha ? 'text' : 'password'" [(ngModel)]="novaSenhaInput" name="nova_senha_rec" placeholder="Digite a nova senha forte" class="form-control" style="padding-right: 40px;" required />
+
+            <span
+              (mousedown)="$event.preventDefault()"
+              (click)="toggleMostrarSenha()"
+              style="position: absolute; right: 12px; cursor: pointer; color: #7f8c8d; display: flex;"
+              title="Mostrar/Ocultar Senha">
+              <svg *ngIf="mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg *ngIf="!mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </span>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary btn-success" [disabled]="carregando">
+          {{ carregando ? 'Salvando...' : 'Salvar Nova Senha' }}
+        </button>
+        <div class="auth-footer" style="margin-top: 15px;">
+           <a style="cursor: pointer; color: #7f8c8d; font-weight: bold;" (click)="etapaRecuperacao = 2">⬅ Voltar ao Código</a>
+        </div>
+      </form>
+    </div>
+
+
+    <form *ngIf="modoCadastro && !etapaVerificacao && !modoRecuperacaoSenha" (ngSubmit)="fazerCadastro()" autocomplete="off">
+
+      <div *ngIf="modoEmpresaCadastro && passoEmpresa === 1">
+        <div class="form-row" style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Nome:</label>
+            <input type="text" [(ngModel)]="nomeInput" name="emp_nome_responsavel" placeholder="Digite seu nome" class="form-control" autocomplete="off" required />
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Sobrenome:</label>
+            <input type="text" [(ngModel)]="sobrenomeInput" name="emp_sobrenome_responsavel" placeholder="Digite seu sobrenome" class="form-control" autocomplete="off" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nome do Lava-Rápido:</label>
+          <input type="text" [(ngModel)]="nomeFantasiaInput" name="emp_fantasia_nome" placeholder="Digite o nome do seu estabelecimento" class="form-control" autocomplete="off" required />
+        </div>
+
+        <div class="form-group">
+          <label>Telefone / WhatsApp:</label>
+          <input type="text" [(ngModel)]="telefoneInput" (input)="aplicarMascaraTelefone($event)" name="emp_tel_comercial" placeholder="(00) 00000-0000" maxlength="15" class="form-control" autocomplete="off" required />
+        </div>
+
+        <div class="form-group">
+          <label>E-mail:</label>
+          <input type="text" [(ngModel)]="emailInput" name="emp_email_login_x" placeholder="Digite seu e-mail" class="form-control" autocomplete="off" required />
+        </div>
+
+        <div class="form-group">
+          <label>Crie uma Senha:</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input [type]="mostrarSenha ? 'text' : 'password'" [(ngModel)]="passwordInput" name="emp_pass_criacao_y" placeholder="Crie uma senha forte" class="form-control" style="padding-right: 40px;" autocomplete="new-password" required />
+
+            <span
+              (mousedown)="$event.preventDefault()"
+              (click)="toggleMostrarSenha()"
+              style="position: absolute; right: 12px; cursor: pointer; color: #7f8c8d; display: flex;"
+              title="Mostrar/Ocultar Senha">
+              <svg *ngIf="mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg *ngIf="!mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" (click)="avancarPassoEmpresa()">Próximo Passo (Endereço) ➔</button>
+      </div>
+
+      <div *ngIf="modoEmpresaCadastro && passoEmpresa === 2">
+        <div class="form-group">
+          <label>CEP:</label>
+          <input type="text" [(ngModel)]="cepInput" (input)="aplicarMascaraCep($event)" name="end_cep_input" placeholder="00000-000" maxlength="9" class="form-control" autocomplete="off" required />
+        </div>
+        <div class="form-group">
+          <label>Rua / Logradouro:</label>
+          <input type="text" [(ngModel)]="ruaInput" name="end_rua_input" placeholder="Rua" class="form-control" autocomplete="off" required />
+        </div>
+        <div class="form-row" style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Número:</label>
+            <input type="text" [(ngModel)]="numeroInput" name="end_num_input" placeholder="123" class="form-control" autocomplete="off" required />
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label>Bairro:</label>
+            <input type="text" [(ngModel)]="bairroInput" name="end_bairro_input" placeholder="Bairro" class="form-control" autocomplete="off" required />
+          </div>
+        </div>
+        <div class="form-row" style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 2;">
+            <label>Cidade:</label>
+            <input type="text" [(ngModel)]="cidadeInput" name="end_cidade_input" placeholder="Cidade" class="form-control" autocomplete="off" required />
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>UF:</label>
+            <input type="text" [(ngModel)]="ufInput" name="end_uf_input" placeholder="UF" class="form-control" autocomplete="off" required />
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-secondary" style="width: 30%; padding: 12px; background: #e2e8f0; color: #333; border: none; border-radius: 8px; cursor: pointer;" (click)="voltarPassoEmpresa()">⬅ Voltar</button>
+          <button type="submit" class="btn-primary" style="width: 70%;" [disabled]="carregando">
+            {{ carregando ? 'Cadastrando...' : 'Finalizar Cadastro' }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="!modoEmpresaCadastro">
+        <div class="form-row" style="display: flex; gap: 10px;">
+          <div class="form-group" style="flex: 1;">
+            <label>Nome:</label>
+            <input type="text" [(ngModel)]="nomeInput" name="cli_nome" placeholder="Digite seu nome" class="form-control" autocomplete="off" required />
+          </div>
+          <div class="form-group" style="flex: 1;">
+            <label>Sobrenome:</label>
+            <input type="text" [(ngModel)]="sobrenomeInput" name="cli_sobrenome" placeholder="Digite seu sobrenome" class="form-control" autocomplete="off" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Telefone / WhatsApp:</label>
+          <input type="text" [(ngModel)]="telefoneInput" (input)="aplicarMascaraTelefone($event)" name="cli_telefone_comercial" placeholder="(00) 00000-0000" maxlength="15" class="form-control" autocomplete="off" required />
+        </div>
+
+        <div class="form-group">
+          <label>E-mail:</label>
+          <input type="text" [(ngModel)]="emailInput" name="cli_email_login_z" placeholder="Digite seu e-mail" class="form-control" autocomplete="off" required />
+        </div>
+
+        <div class="form-group">
+          <label>Senha:</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input [type]="mostrarSenha ? 'text' : 'password'" [(ngModel)]="passwordInput" name="cli_senha_criacao_w" placeholder="Crie uma senha forte" class="form-control" style="padding-right: 40px;" autocomplete="new-password" required />
+
+            <span
+              (mousedown)="$event.preventDefault()"
+              (click)="toggleMostrarSenha()"
+              style="position: absolute; right: 12px; cursor: pointer; color: #7f8c8d; display: flex;"
+              title="Mostrar/Ocultar Senha">
+              <svg *ngIf="mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              <svg *ngIf="!mostrarSenha" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+            </span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="carregando">
+          {{ carregando ? 'Cadastrando...' : 'Criar Conta' }}
+        </button>
+      </div>
+
+      <div class="auth-footer" style="margin-top: 15px;" *ngIf="!modoEmpresaCadastro || (modoEmpresaCadastro && passoEmpresa === 1)">
+        <p>Já possui conta? <a style="cursor: pointer;" (click)="alternarModo()">Faça login aqui</a></p>
+      </div>
+    </form>
+
+    <form *ngIf="etapaVerificacao" (ngSubmit)="confirmarCodigo()" autocomplete="off">
+      <div class="form-group text-center">
+        <p style="margin-bottom: 15px; color: #4b5563;">
+          Enviamos um código de 6 dígitos para <strong>{{ emailCadastradoParaVerificacao }}</strong>
+        </p>
+
+        <label>Código de Verificação:</label>
+        <input type="text" [(ngModel)]="codigoInput" name="otp_codigo_confirmacao" placeholder="123456" class="form-control text-center input-codigo" maxlength="6" autocomplete="off" required />
+      </div>
+
+      <button type="submit" class="btn-primary" [disabled]="carregando">
+        {{ carregando ? 'A verificar...' : 'Confirmar Código e Entrar' }}
+      </button>
+    </form>
+
+  </div>
+</div>

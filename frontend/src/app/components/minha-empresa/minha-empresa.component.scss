@@ -1,0 +1,119 @@
+.empresa-container {
+  max-width: 700px; /* Reduzimos um pouco para o formulário único não ficar muito esticado */
+  margin: 30px auto;
+  padding: 0 20px;
+  font-family: Arial, sans-serif;
+
+  h2 { margin: 0 0 4px 0; color: #1a252f; }
+  .subtitle { color: #7f8c8d; margin-bottom: 24px; font-size: 0.9rem; }
+}
+
+.grid-empresa {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card-secao {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+
+  h3 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
+  .desc-card { color: #7f8c8d; font-size: 0.85rem; margin-bottom: 16px; }
+}
+
+.form-group {
+  margin-bottom: 16px;
+  label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 6px; color: #444; }
+  .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-salvar-empresa {
+  width: 100%;
+  padding: 12px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:hover { background: #219653; }
+  &:disabled { background: #ccc; }
+}
+
+.alert {
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: bold;
+
+  &-success { background: #d4edda; color: #155724; }
+  &-danger { background: #f8d7da; color: #721c24; }
+}
+
+/* 📸 ESTILOS DO UPLOAD DA FOTO/LOGO */
+.foto-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+
+  .preview-foto {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%; /* Deixa a imagem redonda */
+    overflow: hidden;
+    border: 3px solid #edf2f7;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Garante que a imagem preenche o círculo sem distorcer */
+    }
+  }
+
+  .upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+
+    .btn-upload {
+      border: 1px solid #cbd5e0;
+      color: #4a5568;
+      background-color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        background-color: #edf2f7;
+      }
+    }
+
+    input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+  }
+}

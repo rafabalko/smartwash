@@ -1,13 +1,15 @@
 <div class="veiculos-container">
-  <h2>🚗 Meus Veículos</h2>
+  <h2>Meus Veículos</h2>
 
   <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
   <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
 
-  <!-- FORMULÁRIO DE CADASTRO -->
+  <!-- FORMULÁRIO DE CADASTRO / EDIÇÃO -->
   <div class="card-cadastro">
-    <h3>Adicionar Novo Veículo</h3>
-    <form (ngSubmit)="cadastrarVeiculo()">
+    <!-- O título muda dinamicamente -->
+    <h3>{{ veiculoEditandoId ? 'Editar Veículo' : 'Adicionar Novo Veículo' }}</h3>
+
+    <form (ngSubmit)="salvarVeiculo()">
       <div class="form-row">
         <div class="form-group">
           <label>Marca:</label>
@@ -22,7 +24,18 @@
           <input type="text" [(ngModel)]="placaInput" name="placa" placeholder="Ex: ABC1D23" class="form-control">
         </div>
       </div>
-      <button type="submit" class="btn-cadastrar">+ Cadastrar Veículo</button>
+
+      <!-- Botões de Ação -->
+      <div class="form-actions" style="display: flex; gap: 10px; margin-top: 15px;">
+        <button type="submit" class="btn-cadastrar">
+          {{ veiculoEditandoId ? '💾 Salvar Alterações' : '+ Cadastrar Veículo' }}
+        </button>
+
+        <!-- Botão de cancelar só aparece se estiver editando -->
+        <button type="button" class="btn-cancelar" *ngIf="veiculoEditandoId" (click)="cancelarEdicao()">
+          ✕ Cancelar
+        </button>
+      </div>
     </form>
   </div>
 
@@ -43,7 +56,12 @@
           <p class="marca">Marca: {{ v.marca }}</p>
           <p class="placa">Placa: <strong>{{ v.placa }}</strong></p>
         </div>
-        <button class="btn-deletar" (click)="deletarVeiculo(v.id)" title="Remover Veículo">🗑️ Excluir</button>
+
+        <!-- Nova div agrupando as ações -->
+        <div class="acoes-veiculo" style="display: flex; gap: 8px; margin-top: 10px;">
+          <button class="btn-editar" (click)="prepararEdicao(v)" title="Editar Veículo">✏️ Editar</button>
+          <button class="btn-deletar" (click)="deletarVeiculo(v.id)" title="Remover Veículo">🗑️ Excluir</button>
+        </div>
       </div>
     </div>
   </div>

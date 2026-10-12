@@ -1,77 +1,159 @@
 <div class="dashboard-container">
-  <h2>📊 Painel de Controle - Lava-Rápido</h2>
+
+  <div class="header-dashboard">
+    <div>
+      <h2>Painel de Controle</h2>
+      <p class="subtitle">Acompanhe e gerencie os agendamentos do seu lava-rápido.</p>
+    </div>
+  </div>
 
   <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
   <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
 
-  <div class="metrics-grid">
-    <div class="metric-card pendentes">
-      <span class="icon">⏳</span>
-      <div>
-        <h3>{{ totalPendentes }}</h3>
-        <p>Pendentes</p>
-      </div>
+  <div class="cards-resumo">
+    <div class="card-stat pendente" (click)="filtrarPorStatus('PENDENTE')" title="Filtrar Pendentes">
+      <span class="numero">{{ totalPendentes }}</span>
+      <span class="label">Pendentes</span>
     </div>
-    <div class="metric-card andamento">
-      <span class="icon">🧼</span>
-      <div>
-        <h3>{{ totalEmAndamento }}</h3>
-        <p>Em Andamento</p>
-      </div>
+    <div class="card-stat andamento" (click)="filtrarPorStatus('EM_ANDAMENTO')" title="Filtrar Em Andamento">
+      <span class="numero">{{ totalEmAndamento }}</span>
+      <span class="label">Em Andamento</span>
     </div>
-    <div class="metric-card concluidos">
-      <span class="icon">✅</span>
-      <div>
-        <h3>{{ totalConcluidos }}</h3>
-        <p>Concluídos Hoje</p>
-      </div>
+    <div class="card-stat concluido" (click)="filtrarPorStatus('CONCLUIDO')" title="Filtrar Concluídos">
+      <span class="numero">{{ totalConcluidos }}</span>
+      <span class="label">Concluídos</span>
+    </div>
+
+    <div class="card-stat cancelado" (click)="filtrarPorStatus('CANCELADO')" title="Filtrar Cancelados">
+      <span class="numero">{{ totalCancelados }}</span>
+      <span class="label">Cancelados</span>
+    </div>
+
+    <div class="card-stat faturamento" title="Faturamento do Dia Selecionado">
+      <span class="numero">R$ {{ faturamentoHoje | number:'1.2-2' }}</span>
+      <span class="label">Faturamento do Dia</span>
     </div>
   </div>
 
+  <div *ngIf="filtroStatusAtivo" class="filtro-ativo-container">
+    <span class="filtro-info">Filtrando por status: <strong>{{ formatarStatus(filtroStatusAtivo) }}</strong></span>
+    <button class="btn-limpar-filtro" (click)="limparFiltroStatus()">
+      ✕ Limpar Filtro de Status
+    </button>
+  </div>
+
   <div class="card-tabela">
-    <h3>📋 Agendamentos Recebidos</h3>
+    <div class="header-tabela" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+      <h3>
+        Lista de Serviços:
+        <span class="data-destaque">{{ dataFiltro ? (dataFiltro | date:'dd/MM/yyyy') : 'Todos os Dias' }}</span>
+      </h3>
 
-    <div *ngIf="carregando" class="text-muted">Carregando painel...</div>
-    <div *ngIf="!carregando && agendamentos.length === 0" class="text-muted">Nenhum agendamento encontrado.</div>
+      <div class="seletor-data" style="display: flex; align-items: center; gap: 8px; margin: 0;">
+        <label for="calendarioFiltro" style="font-weight: 600; font-size: 0.9rem; color: #555; margin: 0;">Agendamentos do dia:</label>
+        <input
+          type="date"
+          id="calendarioFiltro"
+          [(ngModel)]="dataFiltro"
+          (ngModelChange)="aoMudarData()"
+          class="form-control-date"
+          title="Escolha um dia no calendário"
+          style="padding: 6px 10px; border: 1px solid #cbd5e0; border-radius: 6px; font-family: inherit;"
+        />
+      </div>
+    </div>
 
-    <div class="table-responsive" *ngIf="!carregando && agendamentos.length > 0">
-      <table>
+    <div *ngIf="carregando" class="carregando-texto">Carregando agendamentos...</div>
+
+    <div *ngIf="!carregando && agendamentosFiltrados.length === 0" class="sem-agendamentos">
+      <p>Nenhum agendamento encontrado para {{ dataFiltro ? (dataFiltro | date:'dd/MM/yyyy') : 'esta consulta' }}.</p>
+    </div>
+
+    <div class="tabela-responsive" *ngIf="!carregando && agendamentosFiltrados.length > 0">
+      <table class="tabela-admin">
         <thead>
           <tr>
-            <th>#</th>
+            <th>Horário</th>
             <th>Cliente</th>
-            <th>Veículo</th>
+            <th>Telefone/WhatsApp</th>
             <th>Serviço</th>
-            <th>Data / Horário</th>
+            <th>Veículo / Placa</th>
             <th>Status Atual</th>
             <th>Alterar Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let a of agendamentos">
-            <td>#{{ a.id }}</td>
-            <td><strong>{{ a.cliente_nome || 'Cliente' }}</strong></td>
-            <td>{{ a.veiculo_modelo }} ({{ a.veiculo_placa }})</td>
-            <td>{{ a.servico_nome }}</td>
-            <td>{{ a.data_hora_inicio | date:'dd/MM/yyyy HH:mm' }}</td>
-            <td>
-              <span class="badge" [ngClass]="a.status.toLowerCase()">
-                {{ a.status }}
-              </span>
-            </td>
-            <td>
-              <select
-                [ngModel]="a.status"
-                (ngModelChange)="alterarStatus(a, $event)"
-                class="select-status">
-                <option *ngFor="let op of statusOpcoes" [value]="op.value">
-                  {{ op.label }}
-                </option>
-              </select>
-            </td>
-          </tr>
+          <ng-container *ngFor="let a of agendamentosFiltrados">
+            <tr>
+              <td>
+                <strong>{{ a.data_hora_inicio | date:'HH:mm' }}</strong>
+                <br *ngIf="!dataFiltro">
+                <small *ngIf="!dataFiltro" style="color: #666;">{{ a.data_hora_inicio | date:'dd/MM/yyyy' }}</small>
+              </td>
+
+              <td>
+                <strong>{{ $any(a).cliente_nome || 'Cliente' }}</strong>
+              </td>
+
+              <td>
+                <a *ngIf="$any(a).cliente_telefone" [href]="obterLinkWhatsApp($any(a).cliente_telefone)" target="_blank" title="Chamar no WhatsApp" style="color: #27ae60; text-decoration: none; font-weight: bold;">
+                  {{ formatarTelefone($any(a).cliente_telefone) }}
+                </a>
+                <span *ngIf="!$any(a).cliente_telefone" style="color: #a0aec0;">Não informado</span>
+              </td>
+
+              <td>{{ a.servico_nome || 'Serviço' }}</td>
+              <td>
+                {{ a.veiculo_modelo || 'Veículo' }}
+                <br>
+                <small style="color: #666; font-weight: 600;">Placa: {{ a.veiculo_placa || 'N/D' }}</small>
+              </td>
+              <td>
+                <span class="badge-status" [ngClass]="a.status.toLowerCase()">
+                  {{ formatarStatus(a.status) }}
+                </span>
+              </td>
+              <td>
+                <select
+                  [ngModel]="a.status"
+                  (ngModelChange)="alterarStatus(a, $event)"
+                  class="select-status">
+                  <option
+                    *ngFor="let opt of statusOpcoes"
+                    [value]="opt.value"
+                    [selected]="opt.value === a.status">
+                    {{ opt.label }}
+                  </option>
+                </select>
+              </td>
+            </tr>
+
+            <tr *ngIf="a.status === 'CANCELADO' && ($any(a).motivo_cancelamento || $any(a).motivo)" class="linha-motivo-cancelado">
+              <td colspan="7"> <div class="motivo-cancelado-box">
+                  <strong>Motivo do cancelamento:</strong> <em>"{{ $any(a).motivo_cancelamento || $any(a).motivo }}"</em>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="exibirModalCancelamento">
+  <div class="modal-content">
+    <h3>Confirmar Cancelamento</h3>
+    <p>Tem certeza que deseja cancelar este agendamento?</p>
+
+    <div class="form-group mt-3">
+      <label>Motivo do cancelamento (Opcional):</label>
+      <textarea [(ngModel)]="motivoCancelamentoText" class="form-control" placeholder="Ex: Cliente solicitou reagendamento, imprevisto, etc."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="fecharModalCancelamento()">Voltar</button>
+      <button class="btn btn-danger" (click)="confirmarCancelamento()">Sim, Cancelar</button>
     </div>
   </div>
 </div>

@@ -1,72 +1,66 @@
 .perfil-container {
-  max-width: 650px;
+  max-width: 750px;
   margin: 30px auto;
   padding: 0 20px;
   font-family: Arial, sans-serif;
 
-  h2 { color: #2c3e50; text-align: center; margin-bottom: 24px; }
-  .text-muted { text-align: center; color: #7f8c8d; padding: 20px; }
+  h2 {
+    margin: 0 0 4px 0;
+    color: #1a252f;
+  }
+
+  .subtitle {
+    color: #7f8c8d;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+  }
 }
 
 .card-perfil {
   background: white;
-  padding: 24px;
+  padding: 28px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+}
 
-  .user-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
+.form-group {
+  margin-bottom: 18px;
 
-    .avatar-placeholder {
-      font-size: 3rem;
-      background: #f1f2f6;
-      width: 70px;
-      height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-    }
-
-    h3 { margin: 0 0 4px 0; color: #2c3e50; }
-    .email { margin: 0 0 8px 0; color: #7f8c8d; font-size: 0.9rem; }
-    .badge-tipo {
-      background: #ebf5fb;
-      color: #2980b9;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: bold;
-    }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #444;
   }
 
-  hr { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+  .form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
 
-  h3 { margin-top: 0; color: #34495e; font-size: 1.1rem; margin-bottom: 16px; }
+    &:disabled {
+      background-color: #f1f5f9;
+      color: #64748b;
+      cursor: not-allowed;
+    }
+  }
 }
 
 .form-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
-}
 
-.form-group {
-  margin-bottom: 16px;
-  label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 0.9rem; color: #555; }
-  .form-control {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
   }
 }
 
-.btn-salvar {
+.btn-salvar-perfil {
   width: 100%;
   padding: 12px;
   background: #3498db;
@@ -74,10 +68,19 @@
   border: none;
   border-radius: 6px;
   font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
   margin-top: 10px;
+  transition: background 0.2s;
 
-  &:hover { background: #2980b9; }
+  &:hover {
+    background: #2980b9;
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
 }
 
 .alert {
@@ -85,6 +88,20 @@
   border-radius: 6px;
   margin-bottom: 20px;
   font-weight: bold;
-  &-success { background: #d4edda; color: #155724; }
-  &-danger { background: #f8d7da; color: #721c24; }
+
+  &-success {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  &-danger {
+    background: #f8d7da;
+    color: #721c24;
+  }
+}
+
+.carregando {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 40px 0;
 }

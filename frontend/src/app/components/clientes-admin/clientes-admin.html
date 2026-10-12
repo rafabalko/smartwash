@@ -1,27 +1,41 @@
-<div class="clientes-container">
-  <h2>👥 Base de Clientes do Lava-Rápido</h2>
+<div class="dashboard-container">
+
+  <div class="header-dashboard">
+    <div>
+      <h2>CRM - Base de Clientes</h2>
+      <p class="subtitle">Gerencie o histórico e a fidelidade dos clientes do lava-rápido.</p>
+    </div>
+  </div>
 
   <div class="card-busca">
-    <input
-      type="text"
-      [(ngModel)]="termoBusca"
-      placeholder="🔍 Buscar por nome do cliente, veículo ou placa..."
-      class="form-control"
-    />
+    <div class="busca-input-container">
+      <input
+        type="text"
+        [(ngModel)]="termoBusca"
+        placeholder="Buscar por nome do cliente, veículo ou placa..."
+        class="form-control"
+      />
+      <button *ngIf="termoBusca" class="btn-limpar-busca" (click)="termoBusca = ''">✕</button>
+    </div>
   </div>
 
   <div class="card-tabela">
-    <h3>📋 Relação de Clientes Atendidos</h3>
+    <div class="header-tabela">
+      <h3>Relação de Clientes Atendidos</h3>
+    </div>
 
-    <div *ngIf="carregando" class="text-muted">Carregando lista de clientes...</div>
-    <div *ngIf="!carregando && clientesFiltrados.length === 0" class="text-muted">Nenhum cliente encontrado.</div>
+    <div *ngIf="carregando" class="carregando-texto">Carregando lista de clientes...</div>
 
-    <div class="table-responsive" *ngIf="!carregando && clientesFiltrados.length > 0">
-      <table>
+    <div *ngIf="!carregando && clientesFiltrados.length === 0" class="sem-agendamentos">
+      <p>Nenhum cliente ou veículo encontrado com este termo.</p>
+    </div>
+
+    <div class="tabela-responsive" *ngIf="!carregando && clientesFiltrados.length > 0">
+      <table class="tabela-admin">
         <thead>
           <tr>
             <th>Nome do Cliente</th>
-            <th>Veículo Registado</th>
+            <th>Telefone / WhatsApp</th> <th>Veículo</th>
             <th>Placa</th>
             <th>Total de Lavagens</th>
             <th>Última Visita</th>
@@ -30,9 +44,25 @@
         <tbody>
           <tr *ngFor="let c of clientesFiltrados">
             <td><strong>{{ c.nome }}</strong></td>
+
+            <td>
+              <ng-container *ngIf="c.telefone; else semTelefone">
+                <a [href]="'https://wa.me/55' + c.telefone.replace(/\D/g, '')" target="_blank" class="link-whatsapp" title="Conversar no WhatsApp">
+                  {{ c.telefone }}
+                </a>
+              </ng-container>
+              <ng-template #semTelefone>
+                <span class="text-muted">Não informado</span>
+              </ng-template>
+            </td>
+
             <td>{{ c.veiculo }}</td>
-            <td><code>{{ c.placa }}</code></td>
-            <td><span class="badge-count">{{ c.totalAgendamentos }} lavagem(ns)</span></td>
+            <td><code class="placa-badge">{{ c.placa }}</code></td>
+            <td>
+              <span class="badge-fidelidade">
+                {{ c.totalAgendamentos }} lavagem(ns)
+              </span>
+            </td>
             <td>{{ c.ultimoAgendamento | date:'dd/MM/yyyy HH:mm' }}</td>
           </tr>
         </tbody>

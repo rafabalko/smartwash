@@ -1,0 +1,120 @@
+<div class="detalhes-container" *ngIf="estabelecimento">
+  <button class="btn-voltar" (click)="voltar()">← Voltar para Busca</button>
+
+  <div class="card-hero">
+    <div class="hero-info">
+      <h1>{{ estabelecimento.nome_fantasia }}</h1>
+
+      <div class="caixa-contacto">
+        <div class="item-contacto clicavel" (click)="abrirMaps(estabelecimento.endereco)" title="Ver rota no Google Maps">
+          <span class="icone-box maps">
+            <svg style="flex-shrink: 0;" width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
+              <path fill="currentColor" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+            </svg>
+          </span>
+          <div class="texto-contacto">
+            <small>Endereço</small>
+            <p>{{ estabelecimento.endereco || 'Endereço não informado' }}</p>
+          </div>
+        </div>
+
+        <div class="item-contacto clicavel-whats" (click)="abrirWhatsApp(estabelecimento.telefone, estabelecimento.nome_fantasia)" title="Enviar mensagem no WhatsApp">
+          <span class="icone-box whats">
+            <svg style="flex-shrink: 0;" width="22" height="22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path fill="currentColor" d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+            </svg>
+          </span>
+          <div class="texto-contacto">
+            <small>Telefone / WhatsApp</small>
+            <p>{{ estabelecimento.telefone || 'Telefone não informado' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha inferior unindo Badges e Botão lado a lado -->
+      <div class="hero-footer">
+        <div class="badges">
+          <span class="badge-status" [class.badge-fechado]="!isEstabelecimentoAberto()">
+            {{ isEstabelecimentoAberto() ? '🟢 Aberto Agora' : '🔴 Fechado' }}
+          </span>
+          <span class="badge-rating">⭐ {{ mediaNotas > 0 ? (mediaNotas | number:'1.1-1') : 'Novo' }} ({{ avaliacoes.length }} {{ avaliacoes.length === 1 ? 'avaliação' : 'avaliações' }})</span>
+        </div>
+
+        <div class="hero-action">
+          <button class="btn-agendar-destaque" (click)="iniciarAgendamento()">
+            Realizar Agendamento
+          </button>
+        </div>
+      </div>
+  </div>
+</div>
+
+  <div class="grid-detalhes">
+    <div class="secao-servicos">
+    <h3>Serviços Oferecidos</h3>
+    <div class="lista-servicos">
+      <div *ngIf="servicos.length === 0" style="color: #666; font-style: italic; padding: 10px 0;">
+      Nenhum serviço cadastrado.
+    </div>
+      <div class="card-servico" *ngFor="let s of servicos">
+      <div class="servico-info">
+        <h4>{{ s.nome }}</h4>
+        <p>{{ s.descricao || 'Serviço profissional de limpeza automotiva.' }}</p>
+        <span class="duracao">Duração: {{ s.duracao_em_minutos }} min</span>
+      </div>
+      <div class="servico-preco">
+        <span>R$ {{ s.preco }}</span>
+      </div>
+    </div>
+    </div>
+  </div>
+
+    <div class="secao-avaliacoes">
+    <h3>⭐ Avaliações dos Clientes</h3>
+
+    <div *ngIf="mensagemSucesso" class="alert alert-success" style="margin-bottom: 15px;">{{ mensagemSucesso }}</div>
+    <div *ngIf="mensagemErro" class="alert alert-danger" style="margin-bottom: 15px;">{{ mensagemErro }}</div>
+
+    <div class="card-nova-avaliacao" *ngIf="agendamentoElegivelParaAvaliar">
+      <h4>Deixe sua avaliação</h4>
+      <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Você utilizou este lava-rápido recentemente. Compartilhe como foi!</p>
+
+      <div class="rating-select">
+      <label>Sua nota:</label>
+      <select [(ngModel)]="notaAvaliacao" class="form-control">
+      <option [ngValue]="0" disabled>Selecione</option>
+      <option [ngValue]="5">⭐⭐⭐⭐⭐ (5/5)</option>
+      <option [ngValue]="4">⭐⭐⭐⭐ (4/5)</option>
+      <option [ngValue]="3">⭐⭐⭐ (3/5)</option>
+      <option [ngValue]="2">⭐⭐ (2/5)</option>
+      <option [ngValue]="1">⭐ (1/5)</option>
+      </select>
+    </div>
+      <textarea
+      [(ngModel)]="comentarioAvaliacao"
+      placeholder="Conte como foi sua experiência..."
+      class="form-control"
+      rows="3">
+        </textarea>
+      <button class="btn-enviar-aval" (click)="enviarAvaliacao()">Enviar Avaliação</button>
+    </div>
+
+    <div class="lista-avaliacoes">
+      <div *ngIf="avaliacoes.length === 0" style="color: #666; font-style: italic; padding: 10px 0;">
+      Este estabelecimento ainda não possui avaliações.
+    </div>
+
+      <div class="card-aval" *ngFor="let a of avaliacoes">
+      <div class="aval-header">
+        <strong>{{ a.cliente_nome || 'Cliente SmartWash' }}</strong>
+        <span class="data">{{ a.data_criacao | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="estrelas" style="color: #ffc107; font-size: 1.1rem; margin-bottom: 5px;">
+        <span *ngFor="let star of [1,2,3,4,5]">{{ (a.nota || 0) >= star ? '★' : '☆' }}</span>
+      </div>
+      <p *ngIf="a.comentario">{{ a.comentario }}</p>
+    </div>
+    </div>
+    </div>
+  </div>
+</div>
