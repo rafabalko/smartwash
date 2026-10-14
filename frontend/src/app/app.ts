@@ -8,12 +8,13 @@ import { AgendamentoComponent } from './components/agendamento/agendamento';
 import { HistoricoComponent } from './components/historico/historico';
 import { MeusVeiculosComponent } from './components/meus-veiculos/meus-veiculos';
 import { DashboardAdminComponent } from './components/dashboard-admin/dashboard-admin';
-import { ClientesAdminComponent } from './components/clientes-admin/clientes-admin'; // <--- ADICIONADO AQUI
+import { ClientesAdminComponent } from './components/clientes-admin/clientes-admin';
 import { GestaoServicosComponent } from './components/gestao-servicos/gestao-servicos';
 import { MinhaEmpresaComponent } from './components/minha-empresa/minha-empresa.component';
 import { MeuPerfilComponent } from './components/meu-perfil/meu-perfil';
 import { FavoritosComponent } from './components/favoritos/favoritos';
 import { AuthComponent } from './components/auth/auth';
+
 import { Estabelecimento } from './services/api';
 
 @Component({
@@ -28,7 +29,7 @@ import { Estabelecimento } from './services/api';
     HistoricoComponent,
     MeusVeiculosComponent,
     DashboardAdminComponent,
-    ClientesAdminComponent, // <--- ADICIONADO AQUI NOS IMPORTS DO ANGULAR
+    ClientesAdminComponent,
     GestaoServicosComponent,
     MinhaEmpresaComponent,
     MeuPerfilComponent,
@@ -52,14 +53,17 @@ export class App implements OnInit {
     const token = localStorage.getItem('auth_token');
     const tipo = localStorage.getItem('user_tipo');
 
-    this.isLoggedIn = !!token;
-    this.userTipo = tipo ? tipo.toUpperCase() : 'CLIENTE';
-
-    if (this.isLoggedIn) {
-      this.abaAtiva = this.userTipo === 'ADMIN' ? 'dashboard' : 'buscar';
-    } else {
+    if (!token || token === 'undefined' || token === 'null' || token.trim() === '') {
+      this.isLoggedIn = false;
+      this.userTipo = 'CLIENTE';
       this.abaAtiva = 'login';
+      localStorage.clear();
+      return;
     }
+
+    this.isLoggedIn = true;
+    this.userTipo = tipo ? tipo.toUpperCase() : 'CLIENTE';
+    this.abaAtiva = this.userTipo === 'ADMIN' ? 'dashboard' : 'buscar';
   }
 
   mudarAba(novaAba: string): void {
@@ -89,6 +93,5 @@ export class App implements OnInit {
     this.userTipo = 'CLIENTE';
     this.estabelecimentoSelecionado = null;
     this.abaAtiva = 'login';
-    window.location.reload();
   }
 }

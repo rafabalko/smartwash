@@ -1,6 +1,6 @@
 <div class="empresa-container">
   <h2>Minha Empresa</h2>
-  <p class="subtitle">Gerencie os dados e o logótipo do seu Lava-Rápido.</p>
+  <p class="subtitle">Gerencie os dados, capacidade de atendimento e o logotipo do seu Lava-Rápido.</p>
 
   <div *ngIf="mensagemSucesso" class="alert alert-success">{{ mensagemSucesso }}</div>
   <div *ngIf="mensagemErro" class="alert alert-danger">{{ mensagemErro }}</div>
@@ -8,7 +8,6 @@
   <div *ngIf="carregando" class="carregando">Carregando informações da empresa...</div>
 
   <div class="grid-empresa" *ngIf="!carregando">
-
     <div class="card-secao">
       <h3>Dados do Lava-Rápido</h3>
       <form (ngSubmit)="salvarDadosEmpresa()">
@@ -17,7 +16,7 @@
           <div class="preview-foto">
             <img
               [src]="previewFoto ? previewFoto : formatarImagem(estabelecimento.imagem)"
-              alt="Logótipo da Empresa"
+              alt="Logotipo da Empresa"
               style="width: 100%; height: 100%; object-fit: cover;"
               onerror="this.onerror=null; this.src='assets/img/lava-rapido-padrao.png';"
             >
@@ -27,33 +26,97 @@
             <input type="file" accept="image/*" (change)="onFileSelected($event)">
           </div>
         </div>
+
         <hr style="margin: 20px 0; border: none; border-top: 1px solid #edf2f7;" />
 
         <div class="form-group">
           <label>Nome Fantasia:</label>
-          <input type="text" [(ngModel)]="estabelecimento.nome_fantasia" name="nome_fantasia" class="form-control" required placeholder="Ex: Lava Rápido Express" />
-        </div>
-
-        <div class="form-group">
-          <label>Razão Social:</label>
-          <input type="text" [(ngModel)]="estabelecimento.razao_social" name="razao_social" class="form-control" placeholder="Ex: Lava Rápido Express LTDA" />
+          <input
+            type="text"
+            [(ngModel)]="estabelecimento.nome_fantasia"
+            name="nome_fantasia"
+            class="form-control"
+            required
+            placeholder="Ex: Lava Rápido Express"
+          />
         </div>
 
         <div class="form-group">
           <label>Telefone / WhatsApp:</label>
-          <input type="text" [(ngModel)]="estabelecimento.telefone" name="telefone" class="form-control" placeholder="(00) 00000-0000" />
+          <input
+            type="text"
+            [(ngModel)]="estabelecimento.telefone"
+            name="telefone"
+            class="form-control"
+            placeholder="(00) 00000-0000"
+          />
         </div>
 
         <div class="form-group">
           <label>Endereço Completo:</label>
-          <input type="text" [(ngModel)]="estabelecimento.endereco" name="endereco" class="form-control" placeholder="Rua / Av, Número - Bairro" />
+          <input
+            type="text"
+            [(ngModel)]="estabelecimento.endereco"
+            name="endereco"
+            class="form-control"
+            placeholder="Rua / Av, Número - Bairro"
+          />
         </div>
 
-        <button type="submit" class="btn-salvar-empresa" [disabled]="salvando">
+        <div class="form-group">
+          <label>Descrição / Apresentação:</label>
+          <textarea
+            [(ngModel)]="estabelecimento.descricao"
+            name="descricao"
+            class="form-control"
+            rows="3"
+            placeholder="Conte um pouco sobre os serviços oferecidos..."
+          ></textarea>
+        </div>
+
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #edf2f7;" />
+
+        <h3>Capacidade e Regras de Agendamento</h3>
+
+        <div class="form-group">
+          <label>Limite Máximo de Carros por Dia:</label>
+          <input
+            type="number"
+            [(ngModel)]="estabelecimento.limite_carros_diario"
+            name="limite_carros_diario"
+            class="form-control"
+            min="1"
+            max="100"
+            required
+            placeholder="Ex: 3"
+          />
+          <small class="form-text text-muted">
+            Quantidade total máxima de agendamentos aceitos em um único dia.
+          </small>
+        </div>
+
+        <div class="form-group mt-3">
+          <label>Vagas / Boxes Simultâneos:</label>
+          <input
+            type="number"
+            [(ngModel)]="estabelecimento.vagas_simultaneas"
+            name="vagas_simultaneas"
+            class="form-control"
+            min="1"
+            max="20"
+            required
+            placeholder="Ex: 1"
+          />
+          <small class="form-text text-muted">
+            Quantidade de veículos lavados simultaneamente no mesmo horário.
+          </small>
+        </div>
+
+        <button type="submit" class="btn-salvar-empresa" [disabled]="salvando" style="margin-top: 24px;">
           {{ salvando ? 'Salvando...' : 'Salvar Alterações' }}
         </button>
+
       </form>
     </div>
-
   </div>
 </div>

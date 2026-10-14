@@ -46,15 +46,6 @@
 
     <app-clientes-admin *ngIf="abaAtiva === 'clientes'"></app-clientes-admin>
 
-    <app-agendamento
-      *ngIf="abaAtiva === 'agendamento'"
-      [estabelecimento]="estabelecimentoSelecionado">
-    </app-agendamento>
-
-    <app-historico-agendamentos
-      *ngIf="abaAtiva === 'historico'">
-    </app-historico-agendamentos>
-
     <app-gestao-servicos *ngIf="abaAtiva === 'servicos'"></app-gestao-servicos>
 
     <app-minha-empresa *ngIf="abaAtiva === 'empresa'"></app-minha-empresa>

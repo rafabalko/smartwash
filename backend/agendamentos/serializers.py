@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from datetime import timedelta
 from .models import PerfilUsuario, Estabelecimento, Servico, Veiculo, Agendamento, Favorito, Avaliacao
 
 
@@ -50,7 +49,10 @@ class EstabelecimentoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Estabelecimento
-        fields = ['id', 'nome_fantasia', 'endereco', 'telefone', 'descricao', 'ativo', 'is_favorito', 'imagem']
+        fields = [
+            'id', 'nome_fantasia', 'endereco', 'telefone', 'descricao',
+            'ativo', 'is_favorito', 'imagem', 'limite_carros_diario', 'vagas_simultaneas'
+        ]
 
     def get_is_favorito(self, obj):
         request = self.context.get('request')
@@ -78,7 +80,7 @@ class AgendamentoSerializer(serializers.ModelSerializer):
     veiculo_modelo = serializers.ReadOnlyField(source='veiculo.modelo', default='')
     veiculo_placa = serializers.ReadOnlyField(source='veiculo.placa', default='')
 
-    cliente_nome = serializers.ReadOnlyField(source='cliente.first_name', default='')
+    cliente_nome = serializers.SerializerMethodField()
     cliente_telefone = serializers.ReadOnlyField(source='cliente.perfil.telefone', default='')
 
     avaliacao_id = serializers.ReadOnlyField(source='avaliacao.id', default=None)
@@ -90,39 +92,39 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['cliente', 'status']
 
+    def get_cliente_nome(self, obj):
+        if obj.cliente:
+            if obj.cliente.first_name:
+                return f"{obj.cliente.first_name} {obj.cliente.last_name}".strip()
+            return obj.cliente.username
+        return 'Cliente'
+
     def validate(self, data):
         estabelecimento = data.get('estabelecimento')
         data_hora_inicio = data.get('data_hora_inicio')
-        servico = data.get('servico')
 
         if estabelecimento and data_hora_inicio:
-            conflito_exato = Agendamento.objects.filter(
-                estabelecimento=estabelecimento,
-                data_hora_inicio=data_hora_inicio
-            ).exclude(status='CANCELADO').exists()
+            data_agendamento = data_hora_inicio.date()
 
-            if conflito_exato:
+            total_no_dia = Agendamento.objects.filter(
+                estabelecimento=estabelecimento,
+                data_hora_inicio__date=data_agendamento
+            ).exclude(status='CANCELADO').count()
+
+            if total_no_dia >= estabelecimento.limite_carros_diario:
                 raise serializers.ValidationError({
-                    "data_hora_inicio": "Já existe um agendamento cadastrado para este estabelecimento neste horário exato."
+                    "data_hora_inicio": f"Limite diário atingido! Este estabelecimento atende no máximo {estabelecimento.limite_carros_diario} carros por dia."
                 })
 
-            if servico and hasattr(servico, 'duracao_em_minutos'):
-                duracao = timedelta(minutes=servico.duracao_em_minutos)
-                data_hora_fim = data_hora_inicio + duracao
+            atendimentos_no_horario = Agendamento.objects.filter(
+                estabelecimento=estabelecimento,
+                data_hora_inicio=data_hora_inicio
+            ).exclude(status='CANCELADO').count()
 
-                agendamentos_existentes = Agendamento.objects.filter(
-                    estabelecimento=estabelecimento
-                ).exclude(status='CANCELADO')
-
-                for ag in agendamentos_existentes:
-                    if ag.servico and hasattr(ag.servico, 'duracao_em_minutos'):
-                        ag_inicio = ag.data_hora_inicio
-                        ag_fim = ag_inicio + timedelta(minutes=ag.servico.duracao_em_minutos)
-
-                        if data_hora_inicio < ag_fim and data_hora_fim > ag_inicio:
-                            raise serializers.ValidationError({
-                                "data_hora_inicio": f"Conflito de horário! Este estabelecimento já possui um atendimento das {ag_inicio.strftime('%H:%M')} até {ag_fim.strftime('%H:%M')}."
-                            })
+            if atendimentos_no_horario >= estabelecimento.vagas_simultaneas:
+                raise serializers.ValidationError({
+                    "data_hora_inicio": f"Horário lotado! Este estabelecimento possui {estabelecimento.vagas_simultaneas} vaga(s) simultânea(s) e todas já foram preenchidas."
+                })
 
         return data
 
@@ -132,8 +134,10 @@ class AvaliacaoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Avaliacao
-        fields = ['id', 'agendamento', 'cliente', 'cliente_nome', 'estabelecimento', 'nota', 'comentario',
-                  'data_criacao']
+        fields = [
+            'id', 'agendamento', 'cliente', 'cliente_nome',
+            'estabelecimento', 'nota', 'comentario', 'data_criacao'
+        ]
         read_only_fields = ['cliente', 'estabelecimento', 'data_criacao']
 
     def get_cliente_nome(self, obj):
@@ -144,11 +148,6 @@ class AvaliacaoSerializer(serializers.ModelSerializer):
                     return f"{user.first_name} {user.last_name}".strip()
                 if user.username:
                     return user.username
-
-            if obj.cliente and hasattr(obj.cliente, 'nome') and obj.cliente.nome:
-                return obj.cliente.nome
-
         except Exception:
             pass
-
         return 'Cliente SmartWash'

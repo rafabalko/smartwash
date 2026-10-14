@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
 class VerificacaoEmail(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     codigo = models.CharField(max_length=6)
@@ -11,6 +12,7 @@ class VerificacaoEmail(models.Model):
     def gerar_codigo(self):
         self.codigo = str(random.randint(100000, 999999))
         self.save()
+
 
 class PerfilUsuario(models.Model):
     TIPO_CHOICES = (
@@ -26,7 +28,7 @@ class PerfilUsuario(models.Model):
     estabelecimento = models.ForeignKey('Estabelecimento', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.tipo}"
+        return f"{self.user.username}\n{self.tipo}"
 
 
 class Estabelecimento(models.Model):
@@ -35,10 +37,17 @@ class Estabelecimento(models.Model):
     endereco = models.CharField(max_length=255)
     telefone = models.CharField(max_length=20)
     descricao = models.TextField(blank=True, null=True)
-
     imagem = models.ImageField(upload_to='estabelecimentos/', blank=True, null=True)
-
     ativo = models.BooleanField(default=True)
+
+    limite_carros_diario = models.PositiveIntegerField(
+        default=3,
+        help_text="Máximo de carros que o lava-rápido atende por dia"
+    )
+    vagas_simultaneas = models.PositiveIntegerField(
+        default=1,
+        help_text="Quantidade de boxes/vagas para lavagem simultânea"
+    )
 
     def __str__(self):
         return self.nome_fantasia

@@ -19,11 +19,9 @@ export class DashboardAdminComponent implements OnInit {
 
   faturamentoHoje: number = 0;
 
-  // 📅 Filtro de Data e Status
   dataFiltro: string = '';
   filtroStatusAtivo: string | null = null;
 
-  // Controle do Modal de Cancelamento
   exibirModalCancelamento: boolean = false;
   agendamentoParaCancelar: any = null;
   motivoCancelamentoText: string = '';
@@ -38,11 +36,10 @@ export class DashboardAdminComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    this.irParaHoje(); // Já vai setar a data de hoje e puxar o faturamento correto
+    this.irParaHoje();
     this.carregarAgendamentos();
   }
 
-  // --- CONTROLE DE DATAS ---
   formatarDataIso(data: Date): string {
     const ano = data.getFullYear();
     const mes = String(data.getMonth() + 1).padStart(2, '0');
@@ -52,15 +49,13 @@ export class DashboardAdminComponent implements OnInit {
 
   irParaHoje(): void {
     this.dataFiltro = this.formatarDataIso(new Date());
-    this.carregarFaturamento(); // 🚀 Garante que o faturamento de "hoje" recarregue
+    this.carregarFaturamento();
   }
 
-  // 🚀 NOVO MÉTODO: Disparado quando o admin escolhe outro dia no calendário
   aoMudarData(): void {
     this.carregarFaturamento();
   }
 
-  // --- MENSAGENS TEMPORÁRIAS ---
   mostrarMensagem(tipo: 'sucesso' | 'erro', texto: string): void {
     if (this.timeoutMensagem) {
       clearTimeout(this.timeoutMensagem);
@@ -74,7 +69,6 @@ export class DashboardAdminComponent implements OnInit {
       this.mensagemSucesso = '';
     }
 
-    // A mensagem some após 4 segundos (4000ms)
     this.timeoutMensagem = setTimeout(() => {
       this.mensagemSucesso = '';
       this.mensagemErro = '';
@@ -91,12 +85,11 @@ export class DashboardAdminComponent implements OnInit {
     }
   }
 
-  // --- REQUISIÇÕES AO BACKEND ---
   carregarAgendamentos(): void {
     this.carregando = true;
     this.apiService.getAgendamentos().subscribe({
-      next: (data: Agendamento[]) => {
-        this.agendamentos = data;
+      next: (data: any) => {
+        this.agendamentos = data.results ? data.results : data;
         this.carregando = false;
       },
       error: (err: any) => {
@@ -108,12 +101,11 @@ export class DashboardAdminComponent implements OnInit {
   }
 
   carregarFaturamento(): void {
-    // 🚀 CORREÇÃO PRINCIPAL AQUI: O método agora envia a "dataFiltro" para a API
     this.apiService.getFaturamentoDiario(this.dataFiltro).subscribe({
       next: (res: any) => {
         this.faturamentoHoje = res.faturamento_hoje || 0;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao carregar faturamento diário', err);
       }
     });
@@ -134,7 +126,7 @@ export class DashboardAdminComponent implements OnInit {
         );
 
         this.mostrarMensagem('sucesso', `Status alterado para ${this.formatarStatus(statusFinal)} com sucesso!`);
-        this.carregarFaturamento(); // Atualiza o faturamento após uma alteração
+        this.carregarFaturamento();
       },
       error: (err: any) => {
         console.error('Erro ao alterar status:', err);
@@ -143,7 +135,6 @@ export class DashboardAdminComponent implements OnInit {
     });
   }
 
-  // --- MÉTODOS DO MODAL DE CANCELAMENTO ---
   abrirModalCancelamento(agendamento: Agendamento): void {
     this.agendamentoParaCancelar = agendamento;
     this.motivoCancelamentoText = '';
@@ -171,7 +162,7 @@ export class DashboardAdminComponent implements OnInit {
         this.carregarAgendamentos();
         this.carregarFaturamento();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao cancelar:', err);
         this.mostrarMensagem('erro', err.error?.error || 'Não foi possível cancelar o agendamento.');
         this.exibirModalCancelamento = false;
@@ -179,8 +170,6 @@ export class DashboardAdminComponent implements OnInit {
       }
     });
   }
-
-  // --- MÉTODOS DE FILTRAGEM (DATA E STATUS) ---
 
   filtrarPorStatus(status: string): void {
     this.filtroStatusAtivo = status;
@@ -213,13 +202,9 @@ export class DashboardAdminComponent implements OnInit {
   get totalConcluidos(): number { return this.agendamentosDoDia.filter(a => a.status === 'CONCLUIDO').length; }
   get totalCancelados(): number { return this.agendamentosDoDia.filter(a => a.status === 'CANCELADO').length; }
 
-  // --- 📱 MÉTODOS DE FORMATAÇÃO E WHATSAPP ---
-
-  // Formata o número para exibição: (XX) XXXXX-XXXX
   formatarTelefone(telefone: string): string {
     if (!telefone) return 'Não informado';
 
-    // Remove tudo que não for número
     const num = telefone.replace(/\D/g, '');
 
     if (num.length === 11) {
@@ -228,10 +213,9 @@ export class DashboardAdminComponent implements OnInit {
       return num.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
     }
 
-    return telefone; // Retorna como veio se tiver tamanho diferente
+    return telefone;
   }
 
-  // Limpa o número para o link do WhatsApp funcionar sem erros
   obterLinkWhatsApp(telefone: string): string {
     if (!telefone) return '#';
     const num = telefone.replace(/\D/g, '');

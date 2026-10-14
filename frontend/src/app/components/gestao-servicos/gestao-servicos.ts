@@ -14,10 +14,8 @@ export class GestaoServicosComponent implements OnInit {
   servicos: Servico[] = [];
   carregando: boolean = true;
 
-  // Definido como number garantido (evita o erro de tipo null)
   idEstabelecimentoAtual: number = 0;
 
-  // Campos do formulário
   idEdicao: number | null = null;
   nomeInput: string = '';
   descricaoInput: string = '';
@@ -38,7 +36,6 @@ export class GestaoServicosComponent implements OnInit {
 
     this.apiService.getMeuPerfil().subscribe({
       next: (perfil: any) => {
-        // Pega o ID do estabelecimento retornado pelo serializer novo
         const idEstabelecimento = perfil.estabelecimento_id || perfil.estabelecimento;
 
         if (!idEstabelecimento) {
@@ -50,8 +47,9 @@ export class GestaoServicosComponent implements OnInit {
         this.idEstabelecimentoAtual = Number(idEstabelecimento);
 
         this.apiService.getServicosPorEstabelecimento(this.idEstabelecimentoAtual).subscribe({
-          next: (data: Servico[]) => {
-            this.servicos = data;
+          next: (res: any) => {
+            // Blindagem para tratar listas simples ou paginadas do Django
+            this.servicos = res.results ? res.results : res;
             this.carregando = false;
           },
           error: (err: any) => {
@@ -60,7 +58,7 @@ export class GestaoServicosComponent implements OnInit {
           }
         });
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao carregar perfil:', err);
         this.mensagemErro = 'Erro ao identificar a empresa do usuário.';
         this.carregando = false;
@@ -98,7 +96,10 @@ export class GestaoServicosComponent implements OnInit {
           this.limparFormulario();
           this.carregarServicos();
         },
-        error: () => this.mensagemErro = 'Erro ao atualizar serviço.'
+        error: (err: any) => {
+          console.error('Erro ao atualizar serviço:', err);
+          this.mensagemErro = 'Erro ao atualizar serviço.';
+        }
       });
     } else {
       this.apiService.cadastrarServico(payload).subscribe({
@@ -107,7 +108,10 @@ export class GestaoServicosComponent implements OnInit {
           this.limparFormulario();
           this.carregarServicos();
         },
-        error: () => this.mensagemErro = 'Erro ao cadastrar serviço.'
+        error: (err: any) => {
+          console.error('Erro ao cadastrar serviço:', err);
+          this.mensagemErro = 'Erro ao cadastrar serviço.';
+        }
       });
     }
   }
@@ -127,7 +131,10 @@ export class GestaoServicosComponent implements OnInit {
           this.servicos = this.servicos.filter(s => s.id !== id);
           this.mensagemSucesso = 'Serviço removido com sucesso!';
         },
-        error: () => this.mensagemErro = 'Erro ao remover serviço.'
+        error: (err: any) => {
+          console.error('Erro ao deletar serviço:', err);
+          this.mensagemErro = 'Erro ao remover serviço.';
+        }
       });
     }
   }

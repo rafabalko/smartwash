@@ -73,32 +73,23 @@ export class MeuPerfilComponent implements OnInit {
     });
   }
 
-  // 📱 MÁSCARA DE TELEFONE CORRIGIDA
   aplicarMascaraTelefone(event: any): void {
-    // 1. Remove tudo que não for número
     let valor = event.target.value.replace(/\D/g, '');
 
-    // 2. Limita o tamanho máximo para 11 números (DDD + 9 dígitos)
     valor = valor.substring(0, 11);
 
-    // 3. Aplica a formatação conforme o tamanho do texto digitado
     if (valor.length === 0) {
       valor = '';
     } else if (valor.length <= 2) {
-      // Quando tem só DDD: (11
       valor = valor.replace(/^(\d{0,2})/, '($1');
     } else if (valor.length <= 6) {
-      // Quando tem DDD + até 4/5 números: (11) 9999
       valor = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
     } else if (valor.length <= 10) {
-      // Telefone fixo (10 dígitos): (11) 4444-4444
       valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
     } else {
-      // Celular (11 dígitos): (11) 99999-9999
       valor = valor.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
     }
 
-    // 4. Atualiza a variável correta do perfil e o valor visível no input
     this.perfil.telefone = valor;
     event.target.value = valor;
   }

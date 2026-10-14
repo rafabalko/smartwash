@@ -19,12 +19,7 @@ from .serializers import (
     CadastroSerializer, AvaliacaoSerializer
 )
 
-
 class CustomAuthToken(ObtainAuthToken):
-    """
-    Endpoint customizado de login para retornar o Token HTTP
-    juntamente com as informações do perfil (ADMIN ou CLIENTE).
-    """
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'request': request})
@@ -48,9 +43,7 @@ class CustomAuthToken(ObtainAuthToken):
 
 
 class CadastroView(APIView):
-    """
-    Endpoint público para cadastro de novos clientes com geração de código de verificação por e-mail.
-    """
+
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -81,9 +74,7 @@ class CadastroView(APIView):
 
 
 class CadastroEstabelecimentoView(APIView):
-    """
-    Novo fluxo de cadastro sem CNPJ. Foco na facilidade e conversão.
-    """
+
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -184,13 +175,8 @@ class ValidarCodigoEmailView(APIView):
         except Exception as e:
             return Response({'erro': f'Ocorreu um erro: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 class SolicitarResetSenhaView(APIView):
-    """
-    Gera um código de 6 dígitos e envia para o e-mail do usuário
-    que deseja recuperar a senha.
-    """
+
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -220,9 +206,7 @@ class SolicitarResetSenhaView(APIView):
 
 
 class ConfirmarResetSenhaView(APIView):
-    """
-    Valida o código de 6 dígitos e salva a nova senha criptografada.
-    """
+
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -253,7 +237,6 @@ class ConfirmarResetSenhaView(APIView):
         except VerificacaoEmail.DoesNotExist:
             return Response({'erro': 'Nenhum código de recuperação pendente para este e-mail.'},
                             status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class CriarNovoAdminView(APIView):
@@ -299,7 +282,6 @@ class CriarNovoAdminView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-
 class RemoverFuncionarioView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -319,7 +301,6 @@ class RemoverFuncionarioView(APIView):
             return Response({'message': 'Acesso do funcionário removido com sucesso!'}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'error': 'Funcionário não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
-
 
 class PerfilUsuarioViewSet(viewsets.ModelViewSet):
     serializer_class = PerfilUsuarioSerializer
@@ -375,7 +356,6 @@ class PerfilUsuarioViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(perfil)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class EstabelecimentoViewSet(viewsets.ModelViewSet):
     serializer_class = EstabelecimentoSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -411,7 +391,6 @@ class EstabelecimentoViewSet(viewsets.ModelViewSet):
             return Response({'status': 'removido dos favoritos', 'is_favorito': False}, status=200)
         return Response({'status': 'adicionado aos favoritos', 'is_favorito': True}, status=200)
 
-
 class VeiculoViewSet(viewsets.ModelViewSet):
     serializer_class = VeiculoSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -421,7 +400,6 @@ class VeiculoViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(cliente=self.request.user)
-
 
 class ServicoViewSet(viewsets.ModelViewSet):
     serializer_class = ServicoSerializer
@@ -441,7 +419,6 @@ class ServicoViewSet(viewsets.ModelViewSet):
             estabelecimento = Estabelecimento.objects.first()
 
         serializer.save(estabelecimento=estabelecimento)
-
 
 class AgendamentoViewSet(viewsets.ModelViewSet):
     serializer_class = AgendamentoSerializer
@@ -579,13 +556,11 @@ class AgendamentoViewSet(viewsets.ModelViewSet):
 
         return Response({'status': 'Agendamento cancelado com sucesso!'}, status=status.HTTP_200_OK)
 
-
 class IsOwnerOfAvaliacaoOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_superuser:
             return True
         return obj.cliente.user == request.user
-
 
 class AvaliacaoViewSet(viewsets.ModelViewSet):
     serializer_class = AvaliacaoSerializer
