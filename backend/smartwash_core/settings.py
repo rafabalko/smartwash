@@ -1,3 +1,4 @@
+
 import os
 import dj_database_url
 from pathlib import Path
@@ -26,13 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    # Dependências DRF e CORS
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-
-    # App do Projeto
     'agendamentos',
 ]
 
@@ -89,6 +86,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://smartwash-vercel.vercel.app',
 ]
 
+CORS_URLS_REGEX = r'^/api/.*$'
+
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
@@ -110,6 +109,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
 EMAIL_HOST_USER = os.environ.get(
     'EMAIL_HOST_USER',
     'rafaelbalko@gmail.com'
