@@ -49,11 +49,13 @@ export class BuscaEstabelecimentosComponent implements OnInit {
     this.selecionarEstabelecimento.emit(estab);
   }
 
+
   formatarImagem(url: string | undefined | null): string {
     if (!url) return 'https://via.placeholder.com/300x160?text=Sem+Foto';
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     return `https://smartwash-spyf.onrender.com${url}`;
   }
+
 
   formatarEnderecoReduzido(endereco: string): string {
     if (!endereco) return '';
