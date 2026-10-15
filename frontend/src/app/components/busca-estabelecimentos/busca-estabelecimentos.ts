@@ -52,7 +52,7 @@ export class BuscaEstabelecimentosComponent implements OnInit {
   formatarImagem(url: string | undefined | null): string {
     if (!url) return 'https://via.placeholder.com/300x160?text=Sem+Foto';
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return `http://127.0.0.1:8000${url}`;
+    return `https://smartwash-spyf.onrender.com${url}`;
   }
 
   formatarEnderecoReduzido(endereco: string): string {

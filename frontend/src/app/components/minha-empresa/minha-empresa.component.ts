@@ -85,7 +85,7 @@ export class MinhaEmpresaComponent implements OnInit {
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
-    return `http://127.0.0.1:8000${url}`;
+    return `https://smartwash-spyf.onrender.com${url}`;
   }
 
   salvarDadosEmpresa(): void {
