@@ -1,13 +1,23 @@
-from pathlib import Path
 import os
+import dj_database_url
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-chave-smartwash-dev'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-chave-smartwash-dev'
+)
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
+
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -16,12 +26,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # Dependências DRF e CORS
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    
+
     # App do Projeto
     'agendamentos',
 ]
@@ -30,8 +40,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Deve vir no topo dos middlewares
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -60,14 +71,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'smartwash_core.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smartwash_db',
-        'USER': 'postgres',
-        'PASSWORD': 'postgre2026#',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600
+    )
 }
 
 REST_FRAMEWORK = {
@@ -77,8 +84,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
+    'http://localhost:4200',
+    'http://127.0.0.1:4200',
+    'https://smartwash-vercel.vercel.app',
 ]
 
 LANGUAGE_CODE = 'pt-br'
@@ -86,12 +94,27 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'rafaelbalko@gmail.com'
-EMAIL_HOST_PASSWORD = 'uificfytkvaqmdpf'
-DEFAULT_FROM_EMAIL = 'SmartWash <rafaelbalko@gmail.com>'
+EMAIL_HOST_USER = os.environ.get(
+    'EMAIL_HOST_USER',
+    'rafaelbalko@gmail.com'
+)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = f'SmartWash <{EMAIL_HOST_USER}>'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
